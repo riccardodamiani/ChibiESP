@@ -1,16 +1,17 @@
-#include <Arduino.h>
-
 #include "chibiESP.h"
 #include "driver/button.h"
 #include "core/logging.h"
 #include "driver/wheel.h"
 
-//include cpp files to make sure that are compiled
+//include cpp files that needs to be compiled
 #include "core/logging.cpp"
 #include "core/input/input_manager.cpp"
 #include "driver/driver.cpp"
 #include "driver/button.cpp"
 #include "driver/wheel.cpp"
+#include "core/program/task.cpp"
+#include "core/program/task_manager.cpp"
+#include "core/program/program_manager.cpp"
 
 ChibiESP* ChibiESP::instance = nullptr;
 
@@ -91,5 +92,57 @@ void ChibiESP::update_driver_state(){
 void ChibiESP::loop(){
   // update hardware state
   update_driver_state();
-  
+
+  _task_manager.update();
+}
+
+/**
+ * * @brief Creates a new program and registers it with the program manager.
+ * * @param program The program to be created and registered.
+ * * @return The task ID of the created program, or an error code if the program could not be created.
+ */
+int ChibiESP::create_program(CESP_Program program){
+  return _program_manager.register_program(program); // Register the program with the program manager
+}
+
+/**
+ * * @brief Starts a program by its name.
+ * * @param programName The name of the program to start.
+ * * @return The task ID of the started program, or an error code if the program could not be started.
+ */
+int ChibiESP::start_program(std::string programName){
+  CESP_Program* program = nullptr; // Pointer to hold the program
+  if(!_program_manager.get_program_by_name(programName, program)){
+    return -1; // Error: program not found
+  }
+
+  // Create a new task for the program
+  int taskID = _task_manager.create_new_task(program);
+  if(taskID < 0){
+    return -2; // Error: unable to create task
+  }
+  int started = _task_manager.start_task(taskID); // Start the task
+
+  if(started < 0){
+    return -3; // Error: unable to start task
+  }
+  return taskID; // Return the task ID
+}
+
+/**
+ * * @brief Forcefully kills a task by its ID.
+ * * @param taskID The ID of the task to kill.
+ * * @return 0 on success, or an error code if the task could not
+ */
+int ChibiESP::kill_task(const uint8_t taskID){
+
+  return _task_manager.kill_task(taskID); // Kill the program by its ID
+}
+
+/**
+ * * @brief Gracefully quit a task by its ID.
+ * * @param taskID The ID of the task to quit.
+ */
+int ChibiESP::quit_task(const uint8_t taskID){
+
 }

@@ -1,6 +1,9 @@
 #include "core/logging.h"
 
 #include <cstdio>
+#include <mutex>
+
+std::mutex Logger::_mutex;
 
 int Logger::init(){
     Serial.begin(115200);
@@ -11,8 +14,11 @@ int Logger::init(){
 }
 
 void Logger::info(const char* fmt, ...) {
+
     char msgBuffer[192];
     char finalBuffer[256];
+
+    std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
 
     va_list args;
     va_start(args, fmt);
@@ -28,6 +34,8 @@ void Logger::warning(const char* fmt, ...){
     char msgBuffer[192];
     char finalBuffer[256];
 
+    std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
+
     va_list args;
     va_start(args, fmt);
     vsnprintf(msgBuffer, sizeof(msgBuffer), fmt, args);
@@ -41,6 +49,8 @@ void Logger::warning(const char* fmt, ...){
 void Logger::error(const char* fmt, ...){
     char msgBuffer[192];
     char finalBuffer[256];
+
+    std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
 
     va_list args;
     va_start(args, fmt);

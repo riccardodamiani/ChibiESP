@@ -2,6 +2,7 @@
 #define LOGGING_H
 
 #include <string>
+#include <mutex>
 
 class Logger{
 public:
@@ -10,6 +11,8 @@ public:
   static void info(const char* fmt, ...);
   static void warning(const char* fmt, ...);
   static void error(const char* fmt, ...);
+private:
+  static std::mutex _mutex; // Mutex for thread safety
 };
 
 #endif //LOGGING_H
