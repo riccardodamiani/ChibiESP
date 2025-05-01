@@ -1,7 +1,7 @@
 #ifndef CHIBI_ESP_H
 #define CHIBI_ESP_H
 
-#include "core/control_input/input_manager.h"
+#include "core/input/input_manager.h"
 #include "driver/driver.h"
 
 class ChibiESP{

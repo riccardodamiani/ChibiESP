@@ -7,7 +7,7 @@
 
 //include cpp files to make sure that are compiled
 #include "core/logging.cpp"
-#include "core/control_input/input_manager.cpp"
+#include "core/input/input_manager.cpp"
 #include "driver/driver.cpp"
 #include "driver/button.cpp"
 #include "driver/wheel.cpp"

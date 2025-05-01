@@ -1,4 +1,4 @@
-#include "core/control_input/input_manager.h"
+#include "core/input/input_manager.h"
 #include "core/logging.h"
 
 /**
