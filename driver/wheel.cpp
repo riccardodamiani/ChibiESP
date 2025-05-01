@@ -12,6 +12,17 @@ int CESP_WheelDriver::configure(void* arg){
         return 0; // Nothing to configure
     }
 
+    //checks for device ID conflict
+    for(int dev_index_1 = 0; dev_index_1 < config_struct->devices.size(); dev_index_1++) {
+        for(int dev_index_2 = dev_index_1 + 1; dev_index_2 < config_struct->devices.size(); dev_index_2++) {
+            if( config_struct->devices[dev_index_1].deviceID == config_struct->devices[dev_index_2].deviceID) {
+                Logger::error("Wheel Driver: Device ID conflict between devices %d and %d", dev_index_1, dev_index_2);
+                Logger::error("Wheel Driver: leaving unconfigured");
+                return -1; // Error: ID confict: leave unconfigured
+            }
+        }
+    }
+
     //Initialize internal the structure for each device
     for(const auto& device : config_struct->devices) {
         std::unique_ptr<InternalDeviceInfo> internal_device_state(new InternalDeviceInfo());
