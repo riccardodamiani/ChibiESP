@@ -1,14 +1,14 @@
 #ifndef CHIBI_ESP_H
 #define CHIBI_ESP_H
 
-#include "core/input_manager.h"
+#include "core/control_input/input_manager.h"
 #include "driver/driver.h"
 
 class ChibiESP{
 public:
   int init();
   void loop();
-  void init_drivers();
+  void init_kernel_drivers();
   InputManager& get_input_manager() { return _input_manager; } // Getter for input manager instance
   int register_driver_module(CESP_Driver* driver);
 private:

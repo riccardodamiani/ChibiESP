@@ -1,2 +1,9 @@
 ChibiESP	KEYWORD1
+
 CESP_ButtonDriver   KEYWORD1
+CESP_ButtonConfigStruct KEYWORD2
+CESP_ButtonDriverConfigStruct   KEYWORD2
+
+CESP_WheelDriver    KEYWORD1
+CESP_WheelConfigStruct  KEYWORD2
+CESP_WheelDriverConfigStruct    KEYWORD2
