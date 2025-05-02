@@ -1,5 +1,5 @@
-#include "driver/wheel.h"
-#include "core/logging.h"
+#include "core/driver/wheel.h"
+#include "core/logging/logging.h"
 
 #include <EncoderStepCounter.h>
 #include <memory>

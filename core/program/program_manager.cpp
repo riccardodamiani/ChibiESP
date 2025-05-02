@@ -1,6 +1,6 @@
 #include "core/program/program_manager.h"
 #include "core/program/program.h"
-#include "core/logging.h"
+#include "core/logging/logging.h"
 
 bool CESP_ProgramManager::register_program(CESP_Program program){
 

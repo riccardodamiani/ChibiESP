@@ -1,5 +1,5 @@
-#include "driver/button.h"
-#include "core/logging.h"
+#include "core/driver/button.h"
+#include "core/logging/logging.h"
 
 #include <stdint.h>
 #include <memory>

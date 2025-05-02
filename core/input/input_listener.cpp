@@ -1,6 +1,6 @@
 #include "core/input/input_listener.h"
 #include "core/input/input_manager.h"
-#include "core/logging.h"
+#include "core/logging/logging.h"
 
 #include <vector>
 #include <mutex>

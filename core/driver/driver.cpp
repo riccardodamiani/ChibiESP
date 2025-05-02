@@ -4,7 +4,7 @@
  * @details This file contains the implementation of the base Driver class, which provides methods to handle a generic hardware device
  */
 
-#include "driver/driver.h"
+#include "core/driver/driver.h"
 
 //Configure the driver with all the device that needs to handle
 int CESP_Driver::configure(void* arg){
