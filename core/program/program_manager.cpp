@@ -3,6 +3,15 @@
 #include "core/logging.h"
 
 bool CESP_ProgramManager::register_program(CESP_Program program){
+
+    if(program.user_def_closeup == nullptr ||
+        program.user_def_loop == nullptr ||
+        program.user_def_setup == nullptr ||
+        program.program_name == ""){
+        Logger::error("Program Manager: Program has invalid parameters");
+        return false;
+    }
+
     std::lock_guard<std::mutex> lock(_program_mutex);
 
     // Check if the program is already registered
