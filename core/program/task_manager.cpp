@@ -4,6 +4,12 @@
 #include <map>
 #include <mutex>
 
+CESP_TaskManager::CESP_TaskManager(ChibiESP* kernelObj) : 
+_kernel_obj(kernelObj)
+{
+    
+}
+
 void CESP_TaskManager::update(){
 
     std::lock_guard<std::mutex> lock(_task_map_mutex); // Lock the mutex for thread safety
@@ -43,7 +49,7 @@ int CESP_TaskManager::create_new_task(const CESP_Program* const program){
         ++taskID;
     }
 
-    CESP_Task* task = new CESP_Task(_kernelCoreId, _userCoreId, program->program_name, taskID, 
+    CESP_Task* task = new CESP_Task(_kernel_obj, _kernelCoreId, _userCoreId, program->program_name, taskID, 
         program->user_def_setup, program->user_def_loop, program->user_def_closeup);
     if(task == nullptr){
         Logger::error("Task Manager: Unable to create task object for %s", program->program_name.c_str());

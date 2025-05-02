@@ -1,18 +1,23 @@
 #include "core/program/task.h"
 #include "core/program/task_memory.h"
 #include "core/program/user_task.h"
+#include "core/input/input_manager.h"
+#include "core/input/user_input_interface.h"
+#include "chibiESP.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
 #include <atomic>
 
-CESP_Task::CESP_Task(const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
+CESP_Task::CESP_Task(ChibiESP* kernelObj, const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
     const void (*user_def_setup)(CESP_UserTaskData&), 
     const void (*user_def_loop)(CESP_UserTaskData&), 
     const void (*user_def_closeup)(CESP_UserTaskData&)) :
-    _taskInfo(programName, taskID, kernelCoreId, userCoreId, user_def_setup, user_def_loop, user_def_closeup) // Initialize task status
+    _taskInfo(programName, taskID, kernelCoreId, userCoreId, user_def_setup, user_def_loop, user_def_closeup), // Initialize task status
+    _kernelObj(kernelObj)
 {
+
     _taskInfo.userDataPtr = nullptr; // Initialize user data pointer to null
 
     _taskStatus.task_status = CESP_TaskStatus::TASK_STATUS_IDLE; // Set initial task status to idle
@@ -24,9 +29,16 @@ CESP_Task::CESP_Task(const int kernelCoreId, const int userCoreId, const std::st
 }
 
 void CESP_Task::start_task(){
+    
+    // Get the input listener from the input manager
+    //TODO: avoid whole kernel crashing if register_input_listener fails
+    InputListener *input = nullptr;
+    int listenerId = _kernelObj->register_input_listener(input);
+    _inputInterface.Init(input, listenerId); // Initialize the user input interface with the listener and ID
+    UserInputInterface &inputRef = _inputInterface;
 
-    //prepare the task memory
-    CESP_UserTaskData userTaskData = {_taskInfo.programName, _taskInfo.task_id, _taskInfo.userDataPtr};
+    //prepare the task memory   
+    CESP_UserTaskData userTaskData = {_taskInfo.programName, _taskInfo.task_id, _taskInfo.userDataPtr, inputRef};
     InternalTaskFullData_t *taskData = new InternalTaskFullData_t(this, userTaskData, _taskInfo, _taskStatus);
 
     _taskStatus.task_status = CESP_TaskStatus::TASK_STATUS_RUNNING; // Set task status to running

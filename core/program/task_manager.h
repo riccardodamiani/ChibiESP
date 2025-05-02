@@ -7,8 +7,11 @@
 #include <map>
 #include <mutex>
 
+class ChibiESP;
+
 class CESP_TaskManager{
 public:
+    CESP_TaskManager(ChibiESP* kernelObj);
     void update();
     int create_new_task(const CESP_Program* const program);
     int start_task(const uint32_t taskID); // Start a task by ID
@@ -22,6 +25,8 @@ private:
     std::map<uint8_t, CESP_Task*> _task_map; // Map of task ID to task object
 
     std::mutex _task_map_mutex; // Mutex for thread safety
+
+    ChibiESP * const _kernel_obj;
 };
 
 #endif //TASK_MANAGER_H

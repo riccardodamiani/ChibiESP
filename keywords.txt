@@ -7,3 +7,8 @@ CESP_ButtonDriverConfigStruct   KEYWORD2
 CESP_WheelDriver    KEYWORD1
 CESP_WheelConfigStruct  KEYWORD2
 CESP_WheelDriverConfigStruct    KEYWORD2
+
+InputEvent  KEYWORD2
+InputEventType  KEYWORD2
+KeyEventType    KEYWORD2
+WheelEventType  KEYWORD2

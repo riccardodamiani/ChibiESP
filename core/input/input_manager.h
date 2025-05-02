@@ -8,43 +8,20 @@
 #define INPUT_MANAGER_H
 
 #include <stdint.h>
-#include <vector>
+#include <map>
 #include <mutex>
 
-enum class InputEventType {
-    INPUT_EVENT_KEY = 0,
-    INPUT_EVENT_WHEEL = 1
-};
+#include "core/input/input_listener.h"
 
-enum class KEY_EVENT_TYPE{
-    KEY_EVENT_PRESSED = 0,
-    KEY_EVENT_RELEASED = 1
-};
-
-enum class WHEEL_EVENT_TYPE{
-    WHEEL_EVENT_MOVED = 0
-};
-
-
-struct InputEvent{
-    InputEventType type;
-    uint8_t deviceID;
-    uint8_t deviceEventType;
-    int32_t eventData; //contains information such as how much the wheel has moved
-};
-
-struct InputDestination{
-    uint8_t id; // ID of the input destination
-    void (*event_callback)(InputEvent); // Callback function for input events
-};
+class chibiESP;
 
 class InputManager {
 public:
     InputManager() = default;
     ~InputManager() = default;
 
-    int registerInputDestination(void (*event_callback)(InputEvent));
-    int unregisterInputDestination(uint8_t id);
+    int createInputListener(InputListener *&listener);
+    void update();
 
     //internal use only
     void button_callback(uint8_t buttonID, bool state);
@@ -52,8 +29,8 @@ public:
 private:
     void dispatchEvent(InputEvent event);
 
-    std::vector <InputDestination> _inputDestinations; // List of input destination callbacks
-    std::mutex _destMutex; // Mutex for thread safety
+    std::map <uint16_t, InputListener*> _inputListeners; // List of input destination callbacks
+    std::mutex _mutex; // Mutex for thread safety
 };
 
 #endif //INPUT_MANAGER_H

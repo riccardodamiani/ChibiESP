@@ -3,6 +3,8 @@
 
 #include "core/program/task_memory.h"
 #include "core/program/user_task.h"
+#include "core/input/input_listener.h"
+#include "core/input/user_input_interface.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -10,6 +12,8 @@
 #include <string>
 #include <memory>
 #include <atomic>
+
+class ChibiESP;
 
 //public task status enum
 enum class CESP_TaskStatus{
@@ -37,7 +41,7 @@ struct CESP_TaskInfo_t{
 class CESP_Task{
 public:
 //public methods
-    CESP_Task(const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
+    CESP_Task(ChibiESP* kernelObj, const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
         const void (*user_def_setup)(CESP_UserTaskData& data), 
         const void (*user_def_loop)(CESP_UserTaskData& data), 
         const void (*user_def_closeup)(CESP_UserTaskData& data));
@@ -60,6 +64,9 @@ public:
     }
 
 private:
+    ChibiESP* const _kernelObj;
+    UserInputInterface _inputInterface;
+
 //privare structure contasining all task information
 struct InternalTaskInfo_t{
     const std::string programName;

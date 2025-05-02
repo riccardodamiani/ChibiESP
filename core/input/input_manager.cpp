@@ -1,58 +1,58 @@
 #include "core/input/input_manager.h"
+#include "core/input/input_listener.h"
 #include "core/logging.h"
 
 /**
- * @brief Registers a new input destination with a callback function.
- * * @param event_callback Pointer to the callback function that will handle input events.
- * * @return The ID of the newly registered input destination, or -1 if the callback is invalid.
+ * @brief Creates a new input listener and registers it with the input manager.
+ * * @param listener The input listener to be created and registered.
+ * * @return The ID of the newly created input listener.
  */
-int InputManager::registerInputDestination(void (*event_callback)(InputEvent)){
+int InputManager::createInputListener(InputListener *&listener){
 
-    if (event_callback == nullptr) {
-        return -1; // Invalid callback function
-    }
+    std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
 
-    std::lock_guard<std::mutex> lock(_destMutex); // Lock the mutex for thread safety
-
-    InputDestination newDestination;
-    newDestination.id = _inputDestinations.size(); // Assign a unique ID based on the current size of the vector
-    newDestination.event_callback = event_callback; // Set the callback function
-
-    _inputDestinations.push_back(newDestination); // Add the new destination to the list
-
-    return newDestination.id; // Return the ID of the newly registered destination
-}
-
-/**
- * @brief Unregisters an input destination by its ID.
- * * @param id The ID of the input destination to unregister.
- * * @return 0 on success, -1 if the destination was not found, or -2 if the ID is invalid.
- */
-int InputManager::unregisterInputDestination(uint8_t id){
-    std::lock_guard<std::mutex> lock(_destMutex); // Lock the mutex for thread safety
-
-    if (id >= _inputDestinations.size()) {
-        return -2; // Invalid ID error
-    }
-
-    for(size_t i = 0; i < _inputDestinations.size(); ++i) {
-        if (_inputDestinations[i].id == id) {
-            _inputDestinations.erase(_inputDestinations.begin() + i); // Remove the destination from the list
-            return 0; // Success
+    //find the first listener id available
+    uint16_t listenerId = 0;
+    for(auto& listener : _inputListeners){
+        if(_inputListeners.find(listenerId) == _inputListeners.end()){  //map are always sorted for uint16_t key
+            break; // Found an available listener ID
+        }
+        ++listenerId;
+        if(listenerId >= 500){
+            Logger::error("InputManager: Too many input listeners");
+            return -1; // Error: no available listener ID
         }
     }
 
-    return -1; // not found
+    InputListener *new_listener = new InputListener();
+    _inputListeners[listenerId] = new_listener;
+    listener = new_listener; // Assign the listener to the provided pointer
+    Logger::info("InputManager: Listener ID %d created", listenerId); // Log the creation of the listener
+    return listenerId; // Return the ID of the newly created listener    
+}
+
+void InputManager::update(){
+    std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
+
+    for (auto it = _inputListeners.begin(); it != _inputListeners.end(); ) {
+        InputListener *listener = it->second;
+        if (!listener->isAlive()) { // Verifica se il listener non è vivo
+            Logger::info("InputManager: Removing dead listener ID %d", it->first);
+            delete listener;
+            it = _inputListeners.erase(it); // Rimuovi il listener e aggiorna l'iteratore
+        } else {
+            ++it; // Passa al prossimo elemento
+        }
+    }
 }
 
 void InputManager::button_callback(uint8_t buttonID, bool state){
     InputEvent event;
     event.type = InputEventType::INPUT_EVENT_KEY; // Set the event type to key event
     event.deviceID = buttonID; // Set the device ID to the button ID
-    event.deviceEventType = state ? static_cast<uint8_t>(KEY_EVENT_TYPE::KEY_EVENT_PRESSED) : static_cast<uint8_t>(KEY_EVENT_TYPE::KEY_EVENT_RELEASED); // Set the device event type based on the state
+    event.deviceEventType = state ? static_cast<uint8_t>(KeyEventType::KEY_EVENT_PRESSED) : static_cast<uint8_t>(KeyEventType::KEY_EVENT_RELEASED); // Set the device event type based on the state
     event.eventData = 0; // No additional data for key events
 
-    Logger::info("Button %d %s", buttonID, state ? "pressed" : "released"); // Log the button event
     dispatchEvent(event); // Dispatch the event to registered destinations
 }
 
@@ -60,20 +60,17 @@ void InputManager::wheel_callback(uint8_t deviceID, int delta){
     InputEvent event;
     event.type = InputEventType::INPUT_EVENT_WHEEL; // Set the event type to wheel event  
     event.deviceID = deviceID; // Set the device ID to the wheel device ID
-    event.deviceEventType = static_cast<uint8_t>(WHEEL_EVENT_TYPE::WHEEL_EVENT_MOVED); // Set the device event type to wheel moved
+    event.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED); // Set the device event type to wheel moved
     event.eventData = delta; // Set the event data to the delta value
-
-    Logger::info("Wheel %d moved %d", deviceID, delta); // Log the wheel event
 
     dispatchEvent(event); // Dispatch the event to registered destinations
 }
 
 void InputManager::dispatchEvent(InputEvent event){
-    std::lock_guard<std::mutex> lock(_destMutex); // Lock the mutex for thread safety
+    std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
 
-    for(const auto& destination : _inputDestinations) {
-        if (destination.event_callback != nullptr) {
-            destination.event_callback(event); // Call the callback function for each registered destination
-        }
+    for(auto it = _inputListeners.begin(); it != _inputListeners.end(); it++) {
+        InputListener *listener = it->second;
+        listener->pushEvent(event);
     }
 }

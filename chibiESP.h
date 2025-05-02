@@ -5,9 +5,12 @@
 #include "driver/driver.h"
 #include "core/program/program_manager.h"
 #include "core/program/task_manager.h"
+#include "core/input/input_listener.h"
 
 class ChibiESP{
 public:
+  ChibiESP();
+  
   int init();
   void loop();
   void init_kernel_drivers();
@@ -20,6 +23,9 @@ public:
   int kill_task(const uint8_t taskID); // Kill a task by ID
   int quit_task(const uint8_t taskID); // Gracefully quit a task by ID
   bool isTaskAlive(const uint8_t taskID);
+
+  //input functions (Internal use only)
+  int register_input_listener(InputListener *&listener); // Register an input listener
 private:
   static void button_callback_wrapper(uint8_t buttonID, bool state);
   static void wheel_callback_wrapper(uint8_t buttonID, int delta);
@@ -32,6 +38,8 @@ private:
   CESP_ProgramManager _program_manager; // Program manager instance
   CESP_TaskManager _task_manager; // Task manager instance
   std::vector <CESP_Driver*> _drivers; // List of drivers registered
+
+  uint32_t _slow_loop_timer;
 };
 
 #endif //CHIBI_ESP_H

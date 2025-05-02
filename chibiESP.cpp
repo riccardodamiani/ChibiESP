@@ -6,6 +6,8 @@
 //include cpp files that needs to be compiled
 #include "core/logging.cpp"
 #include "core/input/input_manager.cpp"
+#include "core/input/input_listener.cpp"
+#include "core/input/user_input_interface.cpp"
 #include "driver/driver.cpp"
 #include "driver/button.cpp"
 #include "driver/wheel.cpp"
@@ -13,7 +15,14 @@
 #include "core/program/task_manager.cpp"
 #include "core/program/program_manager.cpp"
 
+
 ChibiESP* ChibiESP::instance = nullptr;
+
+ChibiESP::ChibiESP() : 
+  _task_manager(this)
+{
+
+}
 
 int ChibiESP::init(){
 
@@ -24,6 +33,7 @@ int ChibiESP::init(){
   //get what core is reserved for kernel and for usermode
   _kernelCoreId = xPortGetCoreID();
   _userModeCoreId = 1 - _kernelCoreId;
+  _slow_loop_timer = millis();
 
   Logger::info("Kernel running on core: %d", _kernelCoreId);
 
@@ -93,7 +103,13 @@ void ChibiESP::loop(){
   // update hardware state
   update_driver_state();
 
-  _task_manager.update();
+  //unfrequent tasks
+  if(millis() - _slow_loop_timer){
+    _slow_loop_timer = millis();
+    _task_manager.update();
+    _input_manager.update();
+  }
+
 }
 
 /**
@@ -155,3 +171,7 @@ bool ChibiESP::isTaskAlive(const uint8_t taskID){
   return _task_manager.is_task_alive(taskID);
 }
 
+
+int ChibiESP::register_input_listener(InputListener *&listener){
+  return _input_manager.createInputListener(listener); // Register a new input listener
+}
