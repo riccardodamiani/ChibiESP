@@ -31,8 +31,11 @@ void CESP_Task::start_task(){
 
     _taskStatus.task_status = CESP_TaskStatus::TASK_STATUS_RUNNING; // Set task status to running
 
-    //starts the two ESP tasks in different cores
-    xTaskCreatePinnedToCore(monitorTaskWrapper, "MonitorLoop", 4096, taskData, 1, &_taskStatus.monitorLoopHandle, _taskInfo.kernelCoreId);
+    //starts the monitor task in the kernel core (2500 words are enough)
+    xTaskCreatePinnedToCore(monitorTaskWrapper, "MonitorLoop", 2500, taskData, 1, &_taskStatus.monitorLoopHandle, _taskInfo.kernelCoreId);
+
+    //starts the user task in the user core. 4096 words should be enough since all user memory is in the heap (CESP_TaskMemory)
+    //Anyway the user has about 2000 words of stack memory available in his task
     xTaskCreatePinnedToCore(userTaskWrapper, "UserLoop", 4096, taskData, 1, &_taskStatus.userLoopHandle, _taskInfo.userCoreId);
 }
 
