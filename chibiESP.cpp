@@ -144,5 +144,5 @@ int ChibiESP::kill_task(const uint8_t taskID){
  * * @param taskID The ID of the task to quit.
  */
 int ChibiESP::quit_task(const uint8_t taskID){
-
+  return _task_manager.quit_task(taskID); // Gracefully quit the program by its ID
 }

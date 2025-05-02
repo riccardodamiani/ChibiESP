@@ -13,6 +13,7 @@ public:
     int create_new_task(const CESP_Program* const program);
     int start_task(const uint32_t taskID); // Start a task by ID
     int kill_task(const uint32_t taskID); // Kill a task by ID
+    int quit_task(const uint32_t taskID);   // Quit a task by ID
 private:
     int _freeTaskId; // ID of the next created task
     int _kernelCoreId; // ID of the kernel core

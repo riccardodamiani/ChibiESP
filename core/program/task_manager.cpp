@@ -71,7 +71,7 @@ int CESP_TaskManager::start_task(const uint32_t taskID){
     return 0; // Task started successfully
 }
 
-
+//forcefully kill a task by taskId
 int CESP_TaskManager::kill_task(const uint32_t taskID){
 
     std::lock_guard<std::mutex> lock(_task_map_mutex); // Lock the mutex for thread safety
@@ -85,6 +85,24 @@ int CESP_TaskManager::kill_task(const uint32_t taskID){
     }
     task->kill_task(); // request a task termination
 
-    Logger::info("Task Manager: Requested task ID %d (%s) termination", taskID, task->getInfo().programName.c_str());
+    Logger::info("Task Manager: Requested task ID %d (%s) forced termination", taskID, task->getInfo().programName.c_str());
+    return 0;
+}
+
+//Gacefully quit a task by taskId
+int CESP_TaskManager::quit_task(const uint32_t taskID){
+
+    std::lock_guard<std::mutex> lock(_task_map_mutex); // Lock the mutex for thread safety
+    if(_task_map.find(taskID) == _task_map.end()){
+        return -1; // Error: task not found
+    }
+
+    CESP_Task* task = _task_map[taskID];
+    if(task->getInfo().status == CESP_TaskStatus::TASK_STATUS_QUITTING){
+        return 0; // Task is already terminating
+    }
+    task->quit_task(); // request a task termination
+
+    Logger::info("Task Manager: Requested task ID %d (%s) graceful quit", taskID, task->getInfo().programName.c_str());
     return 0;
 }

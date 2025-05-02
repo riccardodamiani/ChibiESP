@@ -17,7 +17,8 @@ enum class CESP_TaskStatus{
     TASK_STATUS_RUNNING = 1, // Task is running
     TASK_STATUS_TERMINATED = 2, // Task killed
     TASK_STATUS_TERMINATING = 3, // Task is terminating
-    TASK_STATUS_NOT_RESPONDING = 4 // Task not responding
+    TASK_STATUS_QUITTING = 4, // Task is quitting
+    TASK_STATUS_NOT_RESPONDING = 5 // Task not responding
 };
 
 //public information structure about the task
@@ -47,6 +48,7 @@ public:
     void user_task_function(void *args); // Task loop function
     void monitor_task_function(void *args); // Monitor the task
     void kill_task();
+    void quit_task();
 
     static void monitorTaskWrapper(void* arg){
         InternalTaskFullData_t* task = static_cast<InternalTaskFullData_t*>(arg);
@@ -81,7 +83,8 @@ struct InternalTaskStatus_t{
     std::atomic <CESP_TaskStatus> task_status;
     uint32_t task_start_time; // Start time of the task
     std::atomic <uint32_t> task_user_function_start_time; // Start time of the user function
-    std::atomic <bool> terminationRequest; // Flag for task termination request
+    std::atomic <bool> terminationRequest; // Flag for task forced termination request
+    std::atomic <bool> quitRequest; // Flag for task graceful quit request
     std::atomic <bool> user_task_terminated; // Flag for task termination
     TaskHandle_t monitorLoopHandle; // Handle for the task monitor loop
     TaskHandle_t userLoopHandle;    // Handle for the user 
