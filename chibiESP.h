@@ -19,6 +19,7 @@ public:
   int start_program(std::string programName); // Start a program by name
   int kill_task(const uint8_t taskID); // Kill a task by ID
   int quit_task(const uint8_t taskID); // Gracefully quit a task by ID
+  bool isTaskAlive(const uint8_t taskID);
 private:
   static void button_callback_wrapper(uint8_t buttonID, bool state);
   static void wheel_callback_wrapper(uint8_t buttonID, int delta);

@@ -106,3 +106,11 @@ int CESP_TaskManager::quit_task(const uint32_t taskID){
     Logger::info("Task Manager: Requested task ID %d (%s) graceful quit", taskID, task->getInfo().programName.c_str());
     return 0;
 }
+
+bool CESP_TaskManager::is_task_alive(const uint32_t taskID){
+    std::lock_guard<std::mutex> lock(_task_map_mutex); // Lock the mutex for thread safety
+    if(_task_map.find(taskID) == _task_map.end()){
+        return false; // Error: task not found
+    }
+    return true;
+}

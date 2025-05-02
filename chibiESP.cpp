@@ -146,3 +146,12 @@ int ChibiESP::kill_task(const uint8_t taskID){
 int ChibiESP::quit_task(const uint8_t taskID){
   return _task_manager.quit_task(taskID); // Gracefully quit the program by its ID
 }
+
+/**
+ * * @brief checks whether a task is alive or not
+ * * @param taskID The ID of the task to check
+ */
+bool ChibiESP::isTaskAlive(const uint8_t taskID){
+  return _task_manager.is_task_alive(taskID);
+}
+
