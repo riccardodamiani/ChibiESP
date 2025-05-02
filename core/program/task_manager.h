@@ -6,6 +6,7 @@
 
 #include <map>
 #include <mutex>
+#include <string>
 
 class ChibiESP;
 
@@ -18,6 +19,7 @@ public:
     int kill_task(const uint32_t taskID); // Kill a task by ID
     int quit_task(const uint32_t taskID);   // Quit a task by ID
     bool is_task_alive(const uint32_t taskID);   // checks whether a task is alive
+    bool is_program_alive(const std::string programName);   // checks whether a task is alive
 private:
     int _freeTaskId; // ID of the next created task
     int _kernelCoreId; // ID of the kernel core

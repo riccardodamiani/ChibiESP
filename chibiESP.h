@@ -18,11 +18,12 @@ public:
   int register_driver_module(CESP_Driver* driver);
 
   //program functions
-  int create_program(CESP_Program program);
-  int start_program(std::string programName); // Start a program by name
-  int kill_task(const uint8_t taskID); // Kill a task by ID
-  int quit_task(const uint8_t taskID); // Gracefully quit a task by ID
-  bool isTaskAlive(const uint8_t taskID);
+  int createProgram(CESP_Program program);
+  int startProgram(std::string programName); // Start a program by name
+  int killTask(const uint8_t taskID); // Kill a task by ID
+  int quitTask(const uint8_t taskID); // Gracefully quit a task by ID
+  bool isTaskRunning(const uint8_t taskID);
+  bool isProgramRunning(const std::string programName);
 
   //input functions (Internal use only)
   int register_input_listener(InputListener *&listener); // Register an input listener

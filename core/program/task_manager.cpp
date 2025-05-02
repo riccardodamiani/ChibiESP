@@ -120,3 +120,16 @@ bool CESP_TaskManager::is_task_alive(const uint32_t taskID){
     }
     return true;
 }
+
+bool CESP_TaskManager::is_program_alive(const std::string programName){
+    std::lock_guard<std::mutex> lock(_task_map_mutex); // Lock the mutex for thread safety
+
+    for(auto& task : _task_map){
+        CESP_Task* taskObj = task.second;
+        CESP_TaskInfo_t taskInfo = taskObj->getInfo();
+        if(taskInfo.programName == programName){
+            return true;
+        }
+    }
+    return false;
+}

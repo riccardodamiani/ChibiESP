@@ -112,12 +112,16 @@ void ChibiESP::loop(){
 
 }
 
+int ChibiESP::register_input_listener(InputListener *&listener){
+  return _input_manager.createInputListener(listener); // Register a new input listener
+}
+
 /**
  * * @brief Creates a new program and registers it with the program manager.
  * * @param program The program to be created and registered.
  * * @return The task ID of the created program, or an error code if the program could not be created.
  */
-int ChibiESP::create_program(CESP_Program program){
+int ChibiESP::createProgram(CESP_Program program){
   return _program_manager.register_program(program); // Register the program with the program manager
 }
 
@@ -126,7 +130,7 @@ int ChibiESP::create_program(CESP_Program program){
  * * @param programName The name of the program to start.
  * * @return The task ID of the started program, or an error code if the program could not be started.
  */
-int ChibiESP::start_program(std::string programName){
+int ChibiESP::startProgram(std::string programName){
   CESP_Program* program = nullptr; // Pointer to hold the program
   if(!_program_manager.get_program_by_name(programName, program)){
     return -1; // Error: program not found
@@ -150,7 +154,7 @@ int ChibiESP::start_program(std::string programName){
  * * @param taskID The ID of the task to kill.
  * * @return 0 on success, or an error code if the task could not
  */
-int ChibiESP::kill_task(const uint8_t taskID){
+int ChibiESP::killTask(const uint8_t taskID){
 
   return _task_manager.kill_task(taskID); // Kill the program by its ID
 }
@@ -159,7 +163,7 @@ int ChibiESP::kill_task(const uint8_t taskID){
  * * @brief Gracefully quit a task by its ID.
  * * @param taskID The ID of the task to quit.
  */
-int ChibiESP::quit_task(const uint8_t taskID){
+int ChibiESP::quitTask(const uint8_t taskID){
   return _task_manager.quit_task(taskID); // Gracefully quit the program by its ID
 }
 
@@ -167,11 +171,14 @@ int ChibiESP::quit_task(const uint8_t taskID){
  * * @brief checks whether a task is alive or not
  * * @param taskID The ID of the task to check
  */
-bool ChibiESP::isTaskAlive(const uint8_t taskID){
+bool ChibiESP::isTaskRunning(const uint8_t taskID){
   return _task_manager.is_task_alive(taskID);
 }
 
-
-int ChibiESP::register_input_listener(InputListener *&listener){
-  return _input_manager.createInputListener(listener); // Register a new input listener
+/**
+ * * @brief checks whether a program is alive or not
+ * * @param programName The name of the program to check
+ */
+bool ChibiESP::isProgramRunning(const std::string programName){
+  return _task_manager.is_program_alive(programName);
 }
