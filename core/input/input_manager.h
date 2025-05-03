@@ -11,9 +11,10 @@
 #include <map>
 #include <mutex>
 
-#include "core/input/input_listener.h"
+#include "core/input/input_structs.h"
 
 class chibiESP;
+class InputListener;
 
 class InputManager {
 public:

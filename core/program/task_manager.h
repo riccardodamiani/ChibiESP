@@ -1,14 +1,13 @@
 #ifndef TASK_MANAGER_H
 #define TASK_MANAGER_H
 
-#include "core/program/program.h"
-#include "core/program/task.h"
-
 #include <map>
 #include <mutex>
 #include <string>
 
+class CESP_Task;
 class ChibiESP;
+class CESP_Program;
 
 class CESP_TaskManager{
 public:

@@ -1,8 +1,9 @@
 #ifndef USER_INPUT_INTERFACE_H
 #define USER_INPUT_INTERFACE_H
 
-#include "core/input/input_listener.h" //for InputListener
 #include "core/input/input_structs.h"   //for InputEvent
+
+class InputListener;
 
 class UserInputInterface{
     public:

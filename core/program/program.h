@@ -2,7 +2,6 @@
 #define PROGRAM_H
 
 #include "core/program/user_task.h"
-#include "core/program/task_memory.h"
 
 #include <string>
 

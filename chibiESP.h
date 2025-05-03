@@ -2,10 +2,11 @@
 #define CHIBI_ESP_H
 
 #include "core/input/input_manager.h"
-#include "core/driver/driver.h"
 #include "core/program/program_manager.h"
 #include "core/program/task_manager.h"
-#include "core/input/input_listener.h"
+
+class InputListener;
+class CESP_Driver;
 
 class ChibiESP{
 public:

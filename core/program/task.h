@@ -3,7 +3,6 @@
 
 #include "core/program/task_memory.h"
 #include "core/program/user_task.h"
-#include "core/input/input_listener.h"
 #include "core/input/user_input_interface.h"
 
 #include "freertos/FreeRTOS.h"
