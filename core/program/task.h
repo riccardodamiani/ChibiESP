@@ -13,6 +13,7 @@
 #include <atomic>
 
 class ChibiESP;
+class TaskInterface;
 
 //public task status enum
 enum class CESP_TaskStatus{
@@ -44,7 +45,7 @@ public:
         const void (*user_def_setup)(CESP_UserTaskData& data), 
         const void (*user_def_loop)(CESP_UserTaskData& data), 
         const void (*user_def_closeup)(CESP_UserTaskData& data));
-
+    ~CESP_Task();
     CESP_TaskInfo_t getInfo() const; // Get task information
 
     void start_task(); // Start the task
@@ -64,7 +65,7 @@ public:
 
 private:
     ChibiESP* const _kernelObj;
-    UserInputInterface _inputInterface;
+    TaskInterface* _taskInterface;
 
 //privare structure contasining all task information
 struct InternalTaskInfo_t{

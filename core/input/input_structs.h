@@ -4,8 +4,9 @@
 #include <stdint.h>
 
 enum class InputEventType {
-    INPUT_EVENT_KEY = 0,
-    INPUT_EVENT_WHEEL = 1
+    INPUT_EVENT_NONE = 0,
+    INPUT_EVENT_KEY = 1,
+    INPUT_EVENT_WHEEL = 2
 };
 
 enum class KeyEventType{

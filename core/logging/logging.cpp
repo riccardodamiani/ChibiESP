@@ -6,7 +6,7 @@
 std::mutex Logger::_mutex;
 
 int Logger::init(){
-    Serial.begin(115200);
+    Serial.begin(19200);
 
     while(!Serial) delay(10); // wait for serial port to connect
 
@@ -28,6 +28,7 @@ void Logger::info(const char* fmt, ...) {
     snprintf(finalBuffer, sizeof(finalBuffer), "Info: %s", msgBuffer);
 
     Serial.println(finalBuffer);
+    Serial.flush();
 }
 
 void Logger::warning(const char* fmt, ...){
@@ -44,6 +45,7 @@ void Logger::warning(const char* fmt, ...){
     snprintf(finalBuffer, sizeof(finalBuffer), "Warning: %s", msgBuffer);
 
     Serial.println(finalBuffer);
+    Serial.flush();
 }
 
 void Logger::error(const char* fmt, ...){
@@ -60,4 +62,5 @@ void Logger::error(const char* fmt, ...){
     snprintf(finalBuffer, sizeof(finalBuffer), "Error: %s", msgBuffer);
 
     Serial.println(finalBuffer);
+    Serial.flush();
 }

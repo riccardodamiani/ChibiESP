@@ -2,7 +2,7 @@
 #include "core/program/task_memory.h"
 #include "core/program/user_task.h"
 #include "core/input/input_manager.h"
-#include "core/input/user_input_interface.h"
+#include "core/program/task_interface.h"
 #include "chibiESP.h"
 
 #include "freertos/FreeRTOS.h"
@@ -28,17 +28,22 @@ CESP_Task::CESP_Task(ChibiESP* kernelObj, const int kernelCoreId, const int user
     _taskStatus.task_user_function_start_time = 0; // Initialize user function start time
 }
 
+CESP_Task::~CESP_Task(){
+    if(_taskInterface) delete _taskInterface;
+}   
+
 void CESP_Task::start_task(){
     
     // Get the input listener from the input manager
     //TODO: avoid whole kernel crashing if register_input_listener fails
-    InputListener *input = nullptr;
-    int listenerId = _kernelObj->register_input_listener(input);
-    _inputInterface.Init(input, listenerId); // Initialize the user input interface with the listener and ID
-    UserInputInterface &inputRef = _inputInterface;
+    InputListener *inputListener = nullptr;
+    _kernelObj->register_input_listener(inputListener);
+
+    _taskInterface = new TaskInterface(true, _kernelObj, inputListener);
+    TaskInterface& refInterface = *_taskInterface;
 
     //prepare the task memory   
-    CESP_UserTaskData userTaskData = {_taskInfo.programName, _taskInfo.task_id, _taskInfo.userDataPtr, inputRef};
+    CESP_UserTaskData userTaskData = {_taskInfo.programName, _taskInfo.task_id, _taskInfo.userDataPtr, refInterface};
     InternalTaskFullData_t *taskData = new InternalTaskFullData_t(this, userTaskData, _taskInfo, _taskStatus);
 
     _taskStatus.task_status = CESP_TaskStatus::TASK_STATUS_RUNNING; // Set task status to running
@@ -69,12 +74,14 @@ void CESP_Task::user_task_function(void *args){
     if (taskInfo.user_def_setup) {
         taskInfo.user_def_setup(userTaskData);
     }
+    userTaskData.taskInterface._updateInterface();
 
     // Call user-defined loop function
     if (taskInfo.user_def_loop) {
         while(!taskStatus.quitRequest) {    //quit request is handled by the user mode loop
             taskInfo.user_def_loop(userTaskData);
             taskStatus.task_user_function_start_time = millis(); // Update the start time of the user function
+            userTaskData.taskInterface._updateInterface();
         }
     }
     taskStatus.task_status = CESP_TaskStatus::TASK_STATUS_QUITTING; // Set task status to quitting

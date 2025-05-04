@@ -9,7 +9,7 @@
 
 class InputListener {
 public:
-    InputListener(); // Default constructor
+    InputListener();
     ~InputListener() = default; // Default destructor
     bool getEvent (InputEvent &event);
     void clearEvents();

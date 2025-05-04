@@ -18,7 +18,7 @@ bool InputListener::pushEvent(InputEvent event){
     std::lock_guard<std::mutex> lock(_eventMutex); // Lock the mutex for thread safety
     if (_events.size() < MAX_EVENTS) {
         _events.push_back(event); // Add the event to the vector
-        //Logger::info("Pushed event, total size: %d", _events.size());
+
         return true; // Event added successfully
     } else {
         return false; // Event queue is full, event not added
