@@ -44,12 +44,12 @@ public:
   //interfaces
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);
   TwoWire* getI2cInterface(int bus);
+
+  static ChibiESP* instance;
 private:
   static void button_callback_wrapper(uint8_t buttonID, bool state);
   static void wheel_callback_wrapper(uint8_t buttonID, int delta);
   void update_driver_state();
-
-  static ChibiESP* instance;
 
   int _kernelCoreId, _userModeCoreId;
   InputManager _input_manager; // Input manager instance
