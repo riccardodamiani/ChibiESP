@@ -1,11 +1,11 @@
 #pragma once
 
-#include <core/program/user_task.h>
-#include <core/logging/logging.h>
 #include <chibiESP.h>
-#include <core/input/input_structs.h>
-#include <core/graphics/view.h>
-#include <core/graphics/gui_event.h>
+#include <core/logging/logging.h>
+#include <core/task/user_task.h>
+#include <core/task/gui/view.h>
+#include <core/task/gui/gui_event.h>
+#include <core/structs/input_structs.h>
 
 #include <memory>
 

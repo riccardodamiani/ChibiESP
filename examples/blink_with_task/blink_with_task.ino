@@ -1,16 +1,16 @@
 #include <chibiESP.h>
-#include <core/driver/button.h>
-#include <core/driver/control_input_driver.h>
-#include <core/driver/wheel.h>
-#include <core/program/program.h>
-#include <core/program/user_task.h>
-#include <core/program/task_memory.h>
-#include <core/program/task_interface.h>
-#include <core/input/input_structs.h>
+#include <core/kernel/driver/control_input_driver.h>
+#include <core/example_drivers/button.h>
+#include <core/example_drivers/wheel.h>
+#include <core/example_drivers/ssd1306.h>
+#include <core/task/user_task.h>
+#include <core/task/task_memory.h>
+#include <core/task/task_interface.h>
+#include <core/structs/input_structs.h>
 #include <core/logging/logging.h>
-#include <core/driver/ssd1306.h>
-#include <core/graphics/view.h>
-#include <core/graphics/gui_event.h>
+#include <core/task/gui/view.h>
+#include <core/task/gui/gui_event.h>
+#include <core/structs/program.h>
 
 #include "button_program.h"
 #include "blink_program.h"

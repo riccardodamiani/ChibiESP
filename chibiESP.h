@@ -1,10 +1,10 @@
 #ifndef CHIBI_ESP_H
 #define CHIBI_ESP_H
 
-#include "core/input/input_manager.h"
-#include "core/program/program_manager.h"
-#include "core/program/task_manager.h"
-#include "core/kernel/driver_manager.h"
+#include "core/kernel/components/input_manager.h"
+#include "core/kernel/components/program_manager.h"
+#include "core/kernel/components/task_manager.h"
+#include "core/kernel/components/driver_manager.h"
 
 class InputListener;
 class CESP_Driver;

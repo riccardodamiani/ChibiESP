@@ -1,7 +1,7 @@
 #pragma once
 
-#include <core/program/task_memory.h>
-#include <core/program/user_task.h>
+#include <core/task/task_memory.h>
+#include <core/task/user_task.h>
 #include <core/logging/logging.h>
 #include <chibiESP.h>
 
