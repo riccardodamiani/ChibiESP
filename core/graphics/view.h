@@ -51,7 +51,8 @@ public:
     //navigation functions: they run in the same thread of the user task
     void _gui_navigation_down(const int step);
     void _gui_navigation_up(const int step);
-    void _gui_navigation_activate();
+    void _gui_navigation_press();
+    void _gui_navigation_release();
 private:
     //element list incremental steps
     int gui_list_increment_text_index(CESP_GuiElement* element, const int step);

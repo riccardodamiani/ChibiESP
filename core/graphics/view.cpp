@@ -271,13 +271,13 @@ void View::_gui_navigation_up(const int step){
 /**
  * @brief called when the select button is released
  */
-void View::_gui_navigation_activate(){
+void View::_gui_navigation_release(){
     if(_elements.size() == 0 || _selectedElement < 0 || _selectedElement >= _elements.size()) return;
 
     CESP_GuiElement *selected_element = _elements[_selectedElement];
     
     if(selected_element->_element_type == Gui_ElementType::BUTTON){
-        pushGuiEvent(GuiEvent::BUTTON_PRESSED);
+        pushGuiEvent(GuiEvent::BUTTON_RELEASED);
         return;
     }else if (selected_element->_element_type == Gui_ElementType::LIST){
         selected_element->_active = !selected_element->_active;
@@ -289,6 +289,20 @@ void View::_gui_navigation_activate(){
         _requireViewUpdate = true;  //trigger a view update
     }
 
+}
+
+/**
+ * @brief called when the select button is pressed
+ */
+void View::_gui_navigation_press(){
+    if(_elements.size() == 0 || _selectedElement < 0 || _selectedElement >= _elements.size()) return;
+
+    CESP_GuiElement *selected_element = _elements[_selectedElement];
+    
+    if(selected_element->_element_type == Gui_ElementType::BUTTON){
+        pushGuiEvent(GuiEvent::BUTTON_PRESSED);
+        return;
+    }
 }
 
 /**
