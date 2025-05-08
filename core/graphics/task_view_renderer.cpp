@@ -22,7 +22,7 @@ bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
     
     //for now hardcoded. TODO: should come from the driver
     int displayWidth = 128;
-    int displayHeight = 32;
+    int displayHeight = 64;
     int half_screen_size =  displayHeight / 2;
     int upperTextScreenPixel;
     int firstElementOnScreen = 0;

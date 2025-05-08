@@ -1,5 +1,7 @@
 #include "core/driver/wheel.h"
 #include "core/logging/logging.h"
+#include "core/driver/control_input_driver.h"
+#include "core/input/input_structs.h"
 
 #include <EncoderStepCounter.h>
 #include <memory>
@@ -52,17 +54,9 @@ void CESP_WheelDriver::update_device_isr(){
 }
 
 //initialize the encoders and attach interrupts
-int CESP_WheelDriver::init(void* arg){
-
-    CESP_WheelDriverInitStruct* init_struct = (CESP_WheelDriverInitStruct*)arg;
-    if (init_struct == nullptr) {
-        CESP_WheelDriver::_devices.clear(); // Clear the devices if no callback is provided to avoid calling the callback
-        Logger::error("Wheel Driver: Init error: args was nullptr");
-        return -2; // Nothing to configure
-    }
-
-    _input_manager_callback = init_struct->callback;
-    if (_input_manager_callback == nullptr) {
+int CESP_WheelDriver::init(ControlDriverInitStruct_t& init_struct){
+    _input_interrupt = init_struct.input_interrupt; // Set the callback function for input manager
+    if (_input_interrupt == nullptr) {
         CESP_WheelDriver::_devices.clear(); // Clear the devices if no callback is provided to avoid calling the callback
         Logger::error("Wheel Driver: Init error: no callback function provided for input manager");
         return -2; // Nothing to configure
@@ -116,14 +110,22 @@ void CESP_WheelDriver::update_device_state(const std::unique_ptr<InternalDeviceI
             //update state and time
             device->last_change_time_ms = now;
             device->encoder->reset();
-            _input_manager_callback(device->deviceId, delta);
+
+            //call the interrupt callback function
+            struct InputEvent event;
+            event.deviceID = device->deviceId;
+            event.type = InputEventType::INPUT_EVENT_WHEEL;
+            event.deviceEventType = 0; // TODO: define the event type for wheel events
+            event.eventData = delta; // Store the delta in the event data
+
+            _input_interrupt(event);
         }
         
     }
 }
 
 /// Deinitialize the encoders and detach interrupts
-int CESP_WheelDriver::deinit(void* arg){
+int CESP_WheelDriver::deinit(){
 
     for(auto& device : CESP_WheelDriver::_devices) {
         if(device->encoder != nullptr) {
@@ -142,10 +144,14 @@ int CESP_WheelDriver::deinit(void* arg){
 }
 
 //update device state
-int CESP_WheelDriver::update(void* args){
+int CESP_WheelDriver::update(){
     for(auto& device : CESP_WheelDriver::_devices) {
         update_device_state(device);
     }
     return 0;
 
+}
+
+int CESP_WheelDriver::get_device_info(void* arg){
+    return 0;
 }

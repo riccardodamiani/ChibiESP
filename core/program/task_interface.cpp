@@ -75,9 +75,14 @@ bool TaskInterface::getInputEvent(InputEvent &event) { // Get the event from the
         //checks select navigation event
         if(new_event.type == _selectNavEvent.type &&
             new_event.deviceID == _selectNavEvent.deviceID &&
-            new_event.deviceEventType == _selectNavEvent.deviceEventType){
-            active_view->_gui_navigation_activate();
-        }           
+            new_event.deviceEventType == static_cast <uint8_t>(KeyEventType::KEY_EVENT_RELEASED)){
+            active_view->_gui_navigation_release();
+        }    
+        if(new_event.type == _selectNavEvent.type &&
+            new_event.deviceID == _selectNavEvent.deviceID &&
+            new_event.deviceEventType == static_cast <uint8_t>(KeyEventType::KEY_EVENT_PRESSED)){
+            active_view->_gui_navigation_press();
+        }          
     }
 
     //return the event

@@ -1,5 +1,7 @@
 #include "core/driver/button.h"
 #include "core/logging/logging.h"
+#include "core/driver/control_input_driver.h"
+#include "core/input/input_structs.h"
 
 #include <stdint.h>
 #include <memory>
@@ -40,17 +42,10 @@ int CESP_ButtonDriver::configure(void* arg){
 
 
 //initialize the gpio for each button
-int CESP_ButtonDriver::init(void* arg){
+int CESP_ButtonDriver::init(ControlDriverInitStruct_t& init_struct){
 
-    CESP_ButtonDriverInitStruct* init_struct = (CESP_ButtonDriverInitStruct*)arg;
-    if (init_struct == nullptr) {
-        _devices.clear(); // Clear the devices if no callback is provided to avoid calling the callback
-        Logger::error("Button Driver: Init error: args was nullptr");
-        return -2; // Nothing to configure
-    }
-
-    _input_manager_callback = init_struct->callback;
-    if (_input_manager_callback == nullptr) {
+    _input_interrupt = init_struct.input_interrupt;
+    if (_input_interrupt == nullptr) {
         _devices.clear(); // Clear the devices if no callback is provided to avoid calling the callback
         Logger::error("Button Driver: Init error: no callback function provided for input manager");
         return -2; // Nothing to configure
@@ -76,22 +71,37 @@ void CESP_ButtonDriver::update_device_state(const std::unique_ptr<InternalDevice
             // State has changed and debounce time has passed
             device->last_change_time_ms = current_time;
             device->last_state = new_state;
+            struct InputEvent event;
+            event.deviceID = device->deviceID;
+            event.type = InputEventType::INPUT_EVENT_KEY; //button events are of type KEY
+            event.eventData = 0;
+            if(new_state) {
+                event.deviceEventType = static_cast<uint8_t>(KeyEventType::KEY_EVENT_PRESSED); // Button pressed
+            } else {
+                event.deviceEventType = static_cast<uint8_t>(KeyEventType::KEY_EVENT_RELEASED); // Button released
+            }
+
             // Call the callback function with the button ID and new state
-            _input_manager_callback(device->deviceID, new_state);
+            _input_interrupt(event);
         }
     }
 }
 
-int CESP_ButtonDriver::deinit(void* arg){
+int CESP_ButtonDriver::deinit(){
     return 0; // Success
 }
 
 
-int CESP_ButtonDriver::update(void* arg){
+int CESP_ButtonDriver::update(){
 
     //update device state
     for(auto& device : _devices) {
         update_device_state(device);
     }
+    return 0;
+}
+
+
+int CESP_ButtonDriver::get_device_info(void* arg){
     return 0;
 }

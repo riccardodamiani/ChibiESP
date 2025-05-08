@@ -4,6 +4,7 @@
 #include "core/input/input_manager.h"
 #include "core/program/program_manager.h"
 #include "core/program/task_manager.h"
+#include "core/kernel/driver_manager.h"
 
 class InputListener;
 class CESP_Driver;
@@ -19,7 +20,7 @@ public:
   void loop();
   void init_kernel_drivers();
   InputManager& get_input_manager() { return _input_manager; } // Getter for input manager instance
-  int register_driver_module(CESP_Driver* driver);
+  int register_control_input_driver_module(ControlInputDriver* driver);
   int register_display_driver_module(DisplayDriver* driver);
 
   //program functions
@@ -47,16 +48,16 @@ public:
 
   static ChibiESP* instance;
 private:
-  static void button_callback_wrapper(uint8_t buttonID, bool state);
-  static void wheel_callback_wrapper(uint8_t buttonID, int delta);
+  static void input_interrupt_callback(InputEvent &event);
   void update_driver_state();
 
   int _kernelCoreId, _userModeCoreId;
   InputManager _input_manager; // Input manager instance
   InterfaceManager *_interfaceManager;
+  DriverManager* _driverManager; // Driver manager instance
   CESP_ProgramManager _program_manager; // Program manager instance
   CESP_TaskManager _task_manager; // Task manager instance
-  std::vector <CESP_Driver*> _drivers; // List of drivers registered
+  std::vector <ControlInputDriver*> _controlInputDrivers; // List of input drivers registered
   std::vector <DisplayDriver*> _displayDrivers; // List of drivers registered
 
   uint32_t _slow_loop_timer;

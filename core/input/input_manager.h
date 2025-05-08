@@ -25,8 +25,7 @@ public:
     void update();
 
     //internal use only
-    void button_callback(uint8_t buttonID, bool state);
-    void wheel_callback(uint8_t deviceID, int delta);
+    void input_interrupt_callback(InputEvent &event);
 private:
     void dispatchEvent(InputEvent event);
 

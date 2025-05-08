@@ -6,7 +6,7 @@
 #include <atomic>
 #include <memory>
 
-#include "core/driver/driver.h"
+#include "core/driver/control_input_driver.h"
 
 struct CESP_ButtonConfigStruct{
     uint8_t deviceID;
@@ -19,16 +19,13 @@ struct CESP_ButtonDriverConfigStruct{
     std::vector <CESP_ButtonConfigStruct> devices;
 };
 
-struct CESP_ButtonDriverInitStruct{
-    void (*callback)(uint8_t, bool); // Callback function for button events
-};
-
-class CESP_ButtonDriver : public CESP_Driver{
+class CESP_ButtonDriver : public ControlInputDriver{
 public:
     int configure(void* arg) override;
-    int init(void* arg) override;
-    int deinit(void* arg) override;
-    int update(void* arg) override;
+    int init(ControlDriverInitStruct_t& init_struct) override;
+    int deinit() override;
+    int update() override;
+    int get_device_info(void* arg) override;
 
 private:
 struct InternalDeviceInfo{
@@ -43,7 +40,7 @@ struct InternalDeviceInfo{
     void update_device_state(const std::unique_ptr<InternalDeviceInfo>& device);
 
     std::vector<std::unique_ptr<InternalDeviceInfo>> _devices;
-    void (*_input_manager_callback)(uint8_t, bool); // Callback function for button events
+    void (*_input_interrupt)(InputEvent&); // Callback function for button events
 };
 
 #endif //BUTTON_H

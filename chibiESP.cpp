@@ -4,13 +4,14 @@
 #include "core/driver/wheel.h"
 #include "core/interface/interface_manager.h"
 #include "core/driver/display_driver.h"
+#include "core/kernel/driver_manager.h"
 
 //include cpp files that needs to be compiled
 #include "core/logging/logging.cpp"
 #include "core/input/input_manager.cpp"
 #include "core/input/input_listener.cpp"
 #include "core/input/user_input_interface.cpp"
-#include "core/driver/driver.cpp"
+#include "core/driver/control_input_driver.cpp"
 #include "core/driver/button.cpp"
 #include "core/driver/display_driver.cpp"
 #include "core/driver/ssd1306.cpp"
@@ -23,6 +24,7 @@
 #include "core/graphics/view.cpp"
 #include "core/interface/interface_manager.cpp"
 #include "core/program/task_interface.cpp"
+#include "core/kernel/driver_manager.cpp"
 
 
 ChibiESP* ChibiESP::instance = nullptr;
@@ -31,6 +33,7 @@ ChibiESP::ChibiESP() :
   _task_manager(this)
 {
   _interfaceManager = new InterfaceManager();
+  _driverManager = new DriverManager();
 }
 
 int ChibiESP::init(){
@@ -51,92 +54,32 @@ int ChibiESP::init(){
 
 void ChibiESP::init_kernel_drivers(){
 
-  //initialize control input drivers
-  for (auto& driver : _drivers) {
-    if (driver->get_name() == "ButtonDriver") {
-      CESP_ButtonDriverInitStruct init_struct;
-      init_struct.callback = ChibiESP::button_callback_wrapper; // Use static wrapper function
-      driver->init(&init_struct);
-    } else if (driver->get_name() == "WheelDriver") {
-      CESP_WheelDriverInitStruct init_struct;
-      init_struct.callback = ChibiESP::wheel_callback_wrapper; // Use static wrapper function
-      driver->init(&init_struct);
-    } else {
-
-    }
-  }
-
-  DisplayDriverInitStruct initStruct;
-  initStruct.kernelInstance = this;
-  for (int i = 0; i < _displayDrivers.size(); i++) {
-    if(_displayDrivers[i]->init(&initStruct) < 0){
-      Logger::error("Failed to initialize display driver %s", _displayDrivers[i]->get_name());
-    }
-  }
-}
-
-int ChibiESP::register_driver_module(CESP_Driver* driver){
-  // Check if the driver is already registered
-  for (const auto& existing_driver : _drivers) {
-    if (existing_driver->get_name() == driver->get_name()) {
-      Logger::error("Driver %s is already registered", driver->get_name().c_str());
-      return -1; // Driver already registered
-    }
-  }
-
-  // Register the new driver
-  _drivers.push_back(driver);
-  Logger::info("Driver %s registered", driver->get_name().c_str());
-  return 0; // Success
-}
-
-int ChibiESP::register_display_driver_module(DisplayDriver* driver){
-  
-  // Check if the driver is already registered
-  for (const auto& existing_driver : _displayDrivers) {
-    if (existing_driver->get_name() == driver->get_name()) {
-      Logger::error("Display driver %s is already registered", driver->get_name().c_str());
-      return -1; // Driver already registered
-    }
-  }
-
-  // Register the new driver
-  _displayDrivers.push_back(driver);
-  Logger::info("Display driver %s registered", driver->get_name().c_str());
-  return 0; // Success
-}
-
-DisplayDriver* ChibiESP::getDisplayDriver(std::string name){
-  for(int i = 0; i < _displayDrivers.size(); i++){
-    if(_displayDrivers[i]->get_name() == name){
-      return _displayDrivers[i];
-    }
-  }
-  return nullptr;
-}
-
-// Static wrapper function for button inputs
-void ChibiESP::button_callback_wrapper(uint8_t buttonID, bool state) {
-  // Forward the call to the instance's _input_manager
-  if (instance) {
-    instance->get_input_manager().button_callback(buttonID, state);
-  }
+  _driverManager->init_control_input_drivers(ChibiESP::input_interrupt_callback); // Initialize control input drivers
+  _driverManager->init_display_drivers(this); // Initialize display drivers
 }
 
 // Static wrapper function for wheel inputs
-void ChibiESP::wheel_callback_wrapper(uint8_t buttonID, int delta) {
+void ChibiESP::input_interrupt_callback(InputEvent &event){
   // Forward the call to the instance's _input_manager
   if (instance) {
-    instance->get_input_manager().wheel_callback(buttonID, delta);
+    instance->get_input_manager().input_interrupt_callback(event); // Call the input manager's callback function
   }
 }
 
+int ChibiESP::register_control_input_driver_module(ControlInputDriver* driver){
+  return _driverManager->register_control_input_driver_module(driver); // Register the driver with the driver manager
+}
+
+int ChibiESP::register_display_driver_module(DisplayDriver* driver){
+  return _driverManager->register_display_driver_module(driver); // Register the driver with the driver manager
+}
+
+DisplayDriver* ChibiESP::getDisplayDriver(std::string name){
+  return _driverManager->get_display_driver_by_name(name); // Get the display driver by name
+}
+
 void ChibiESP::update_driver_state(){
-  // Update the state of each driver
-  for (int i = 0; i < _drivers.size(); ++i) {
-    CESP_Driver* driver = _drivers[i];
-    driver->update(nullptr); // Pass nullptr as argument for now
-  }
+  _driverManager->update_control_input_drivers_state(); // Update the state of control input drivers
 }
 
 void ChibiESP::loop(){

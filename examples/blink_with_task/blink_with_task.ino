@@ -1,6 +1,6 @@
 #include <chibiESP.h>
 #include <core/driver/button.h>
-#include <core/driver/driver.h>
+#include <core/driver/control_input_driver.h>
 #include <core/driver/wheel.h>
 #include <core/program/program.h>
 #include <core/program/user_task.h>
@@ -43,7 +43,7 @@ void setup() {
   BConfig.devices.push_back(button2);
   BDriver->configure(&BConfig);
 
-  kernel.register_driver_module(BDriver);
+  kernel.register_control_input_driver_module(BDriver);
 
   kernel.init_kernel_drivers();
 

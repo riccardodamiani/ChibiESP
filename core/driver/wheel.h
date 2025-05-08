@@ -6,7 +6,8 @@
 #include <atomic>
 #include <memory>
 
-#include "core/driver/driver.h"
+#include "core/driver/control_input_driver.h"
+#include "core/input/input_structs.h"
 
 struct CESP_WheelConfigStruct{
   uint8_t deviceID;
@@ -19,16 +20,13 @@ struct CESP_WheelDriverConfigStruct{
   std::vector <CESP_WheelConfigStruct> devices;
 };
 
-struct CESP_WheelDriverInitStruct{
-  void (*callback)(uint8_t, int); // Callback function for wheel events
-};
-
-class CESP_WheelDriver : public CESP_Driver {
+class CESP_WheelDriver : public ControlInputDriver {
 public:
   int configure(void* arg) override;
-  int init(void* arg) override;
-  int deinit(void* arg) override;
-  int update(void* args) override;
+  int init(ControlDriverInitStruct_t& init_struct) override;
+  int deinit() override;
+  int update() override;
+  int get_device_info(void* arg) override;
 
 private:
 struct InternalDeviceInfo{
@@ -45,7 +43,7 @@ struct InternalDeviceInfo{
   static void update_device_isr();
 
   static std::vector<std::unique_ptr<InternalDeviceInfo>> _devices;
-  void (*_input_manager_callback)(uint8_t, int); // Callback function for button events
+  void (*_input_interrupt)(InputEvent&); // Callback function for button events
 };
 
 #endif //WHEEL_H

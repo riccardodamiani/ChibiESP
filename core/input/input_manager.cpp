@@ -46,25 +46,10 @@ void InputManager::update(){
     }
 }
 
-void InputManager::button_callback(uint8_t buttonID, bool state){
-    InputEvent event;
-    event.type = InputEventType::INPUT_EVENT_KEY; // Set the event type to key event
-    event.deviceID = buttonID; // Set the device ID to the button ID
-    event.deviceEventType = state ? static_cast<uint8_t>(KeyEventType::KEY_EVENT_PRESSED) : static_cast<uint8_t>(KeyEventType::KEY_EVENT_RELEASED); // Set the device event type based on the state
-    event.eventData = 0; // No additional data for key events
-
+void InputManager::input_interrupt_callback(InputEvent &event){
     dispatchEvent(event); // Dispatch the event to registered destinations
 }
 
-void InputManager::wheel_callback(uint8_t deviceID, int delta){
-    InputEvent event;
-    event.type = InputEventType::INPUT_EVENT_WHEEL; // Set the event type to wheel event  
-    event.deviceID = deviceID; // Set the device ID to the wheel device ID
-    event.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED); // Set the device event type to wheel moved
-    event.eventData = delta; // Set the event data to the delta value
-
-    dispatchEvent(event); // Dispatch the event to registered destinations
-}
 
 void InputManager::dispatchEvent(InputEvent event){
     std::lock_guard<std::mutex> lock(_mutex); // Lock the mutex for thread safety
