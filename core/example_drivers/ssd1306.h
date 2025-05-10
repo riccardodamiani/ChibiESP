@@ -9,7 +9,7 @@ class SSD1306 : public DisplayDriver{
 public:
     SSD1306();
     int configure(void* arg) override;
-    int init(DisplayDriverInitStruct *chibiESP_Instance) override;
+    int init() override;
     int deinit(void* arg) override;
     int clearScreen();
     int updateScreen();

@@ -13,7 +13,6 @@
 
 #include "core/structs/input_structs.h"
 
-class chibiESP;
 class InputListener;
 
 class InputManager {

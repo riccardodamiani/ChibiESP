@@ -6,10 +6,6 @@
 
 class ChibiESP;
 
-struct DisplayDriverInitStruct{
-    ChibiESP* kernelInstance;
-};
-
 enum BW_Color{
     CESP_BLACK = 0,
     CESP_WHITE = 1
@@ -23,7 +19,7 @@ class DisplayDriver{
 public:
     DisplayDriver();
     virtual int configure(void* arg);
-    virtual int init(DisplayDriverInitStruct *chibiESP_Instance);
+    virtual int init();
     virtual int deinit(void* arg);
     virtual int updateScreen();
     virtual int clearScreen();

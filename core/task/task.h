@@ -11,7 +11,7 @@
 #include <memory>
 #include <atomic>
 
-class ChibiESP;
+class ChibiKernel;
 class TaskInterface;
 
 //public task status enum
@@ -40,7 +40,7 @@ struct CESP_TaskInfo_t{
 class CESP_Task{
 public:
 //public methods
-    CESP_Task(ChibiESP* kernelObj, const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
+    CESP_Task(ChibiKernel* kernelObj, const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
         const void (*user_def_setup)(CESP_UserTaskData& data), 
         const void (*user_def_loop)(CESP_UserTaskData& data), 
         const void (*user_def_closeup)(CESP_UserTaskData& data));
@@ -63,7 +63,7 @@ public:
     }
 
 private:
-    ChibiESP* const _kernelObj;
+    ChibiKernel* const _kernelObj;
     TaskInterface* _taskInterface;
 
 //privare structure contasining all task information

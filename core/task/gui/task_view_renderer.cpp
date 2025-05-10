@@ -5,8 +5,8 @@
 #include "core/kernel/driver/display_driver.h"
 #include "chibiESP.h"
 
-TaskViewRenderer::TaskViewRenderer(ChibiESP* kernelInstance){
-    _displayDriver = kernelInstance->getDisplayDriver("ssd1306");
+TaskViewRenderer::TaskViewRenderer(){
+    _displayDriver = chibiESP.getDisplayDriver("ssd1306");
     if(!_displayDriver) Logger::error("No fucking display driver");
 }
 

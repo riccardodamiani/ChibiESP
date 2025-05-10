@@ -20,12 +20,10 @@ int SSD1306::configure(void* arg){
     return 0;
 }
 
-int SSD1306::init(DisplayDriverInitStruct *initStruct){
-    if(initStruct->kernelInstance == nullptr) return -1;
-
+int SSD1306::init(){
     //This driver needs a i2c interface handled by the kernel
     //NEVER close the TwoWire interface since it's managed by the system
-    TwoWire* i2cInterface = initStruct->kernelInstance->getI2cInterface(0);
+    TwoWire* i2cInterface = chibiESP.getI2cInterface(0);
     if(i2cInterface == nullptr){
         Logger::error("SSD1306 driver error: i2c interface is nullptr");
         return -1;

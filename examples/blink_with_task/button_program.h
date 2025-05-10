@@ -30,18 +30,18 @@ const void button_program_loop(CESP_UserTaskData &taskData){
         static_cast<KeyEventType>(event.deviceEventType) == KeyEventType::KEY_EVENT_RELEASED){
         ButtonProgram_Memory* memory = static_cast<ButtonProgram_Memory*>(taskData.userDataPtr.get());
         if(event.deviceID == START_TASK_BUTTON_ID){
-          if(ChibiESP::instance->isProgramRunning("blink program")){
+          if(chibiESP.isProgramRunning("blink program")){
             Logger::info("Blink task already running");
           }else{
             Logger::info("Starting blink program");
-            memory->prog2_taskID = ChibiESP::instance->startProgram("blink program");
+            memory->prog2_taskID = chibiESP.startProgram("blink program");
           }
         }else if(event.deviceID == STOP_TASK_BUTTON_ID){
-          if(!ChibiESP::instance->isProgramRunning("blink program")){
+          if(!chibiESP.isProgramRunning("blink program")){
             Logger::info("Blink task is not running");
           }else{
             Logger::info("Quitting blink program");
-            ChibiESP::instance->quitTask(memory->prog2_taskID);
+            chibiESP.quitTask(memory->prog2_taskID);
           }
         }
       }

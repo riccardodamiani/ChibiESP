@@ -4,11 +4,10 @@
 #include "core/task/gui/view_render.h"
 
 class DisplayDriver;
-class ChibiESP;
 
 class TaskViewRenderer{
 public:
-    TaskViewRenderer(ChibiESP*);
+    TaskViewRenderer();
     bool renderView(ViewRenderStruct &renderView);
 private:
     DisplayDriver *_displayDriver;

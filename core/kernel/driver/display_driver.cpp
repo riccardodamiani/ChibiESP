@@ -41,7 +41,7 @@ int DisplayDriver::getTextSize(std::string text, int16_t x, int16_t y, int16_t s
  * @brief Driver initialization function
  * @details This is called by the kernel when the driver is loaded (and starts running). This should contain hardware inizialization stuff
  */
-int DisplayDriver::init(DisplayDriverInitStruct *chibiESP_Instance){
+int DisplayDriver::init(){
     return 0;
 }
 

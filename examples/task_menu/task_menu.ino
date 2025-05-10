@@ -17,18 +17,16 @@
 #include <vector>
 #include <memory>
 
-ChibiESP kernel;
-
 void user_setup_function(){
   CESP_Program menuProgram("menu program", menu_program_setup, menu_program_loop, menu_program_closeup );
 
-  kernel.createProgram(menuProgram);
+  chibiESP.createProgram(menuProgram);
 
-  kernel.startProgram("menu program");
+  chibiESP.startProgram("menu program");
 }
 
 void setup() {
-  kernel.init();
+  chibiESP.init();
 
   CESP_ButtonDriver *BDriver = new CESP_ButtonDriver();
   CESP_ButtonDriverConfigStruct BConfig;
@@ -46,22 +44,22 @@ void setup() {
   WConfig.devices.push_back(navigationWheel);
   WDriver->configure(&WConfig);
 
-  kernel.register_control_input_driver_module(BDriver);
-  kernel.register_control_input_driver_module(WDriver);
+  chibiESP.register_control_input_driver_module(BDriver);
+  chibiESP.register_control_input_driver_module(WDriver);
 
-  kernel.registerI2cInterface(0, 9, 8);
+  chibiESP.registerI2cInterface(0, 9, 8);
 
   SSD1306 *displayDriver = new SSD1306();
   displayDriver->configure(nullptr);
-  kernel.register_display_driver_module(displayDriver);
+  chibiESP.register_display_driver_module(displayDriver);
 
-  kernel.init_kernel_drivers();
+  chibiESP.init_kernel_drivers();
 
   user_setup_function();
 }
 
 void loop() {
-  kernel.loop();
+  chibiESP.loop();
 
   delay(10);
 }

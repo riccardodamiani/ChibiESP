@@ -5,17 +5,17 @@
 #include "core/task/gui/task_view_renderer.h"
 #include "chibiESP.h"
 
-TaskInterface::TaskInterface(bool enableGraphics, ChibiESP* kernelInstance, InputListener *listener) : 
+TaskInterface::TaskInterface(bool enableGraphics, InputListener *listener) : 
 _enableGraphics(enableGraphics)
 {
     _inputListener = nullptr; // Initialize listener to null
     _deleteCurrentView = false;
 
     inputInit(listener);
-    _viewRenderer = new TaskViewRenderer(kernelInstance);
-    _upNavEvent = kernelInstance->getNavUpEvent();
-    _downNavEvent = kernelInstance->getNavDownEvent();
-    _selectNavEvent = kernelInstance->getNavSelectEvent();
+    _viewRenderer = new TaskViewRenderer();
+    _upNavEvent = chibiESP.getNavUpEvent();
+    _downNavEvent = chibiESP.getNavDownEvent();
+    _selectNavEvent = chibiESP.getNavSelectEvent();
     _renderTimer = millis();
 }
 

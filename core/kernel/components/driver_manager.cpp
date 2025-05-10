@@ -5,8 +5,6 @@
 #
 #include <mutex>
 
-class ChibiESP;
-
 int DriverManager::register_control_input_driver_module(ControlInputDriver* driver){
     std::lock_guard<std::mutex> lock(_controlInputDriverMutex); // Lock the mutex for thread safety
     for (const auto& existing_driver : _regControlInputDrivers) {
@@ -52,12 +50,10 @@ void DriverManager::init_control_input_drivers(void input_interrupt_callback(Inp
     }
 }
 
-void DriverManager::init_display_drivers(ChibiESP* kernelInstance){
+void DriverManager::init_display_drivers(){
     // Initialize display drivers
     for (auto& displayDriver : _regDisplayDrivers) {
-        DisplayDriverInitStruct init_struct;
-        init_struct.kernelInstance = kernelInstance; // Set the kernel instance
-        if(displayDriver.driver->init(&init_struct) < 0){
+        if(displayDriver.driver->init() < 0){
             Logger::error("Failed to initialize display driver %s", displayDriver.driver->get_name().c_str());
         }
     }

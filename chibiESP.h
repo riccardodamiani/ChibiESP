@@ -2,24 +2,27 @@
 #define CHIBI_ESP_H
 
 #include "core/kernel/components/input_manager.h"
-#include "core/kernel/components/program_manager.h"
-#include "core/kernel/components/task_manager.h"
-#include "core/kernel/components/driver_manager.h"
+#include "core/structs/program.h"
+#include "core/structs/input_structs.h"
+
+#include <string>
+#include <stdint.h>
 
 class InputListener;
 class CESP_Driver;
 class DisplayDriver;
 class InterfaceManager;
 class TwoWire;
+class ChibiKernel;
+class ControlInputDriver;
 
 class ChibiESP{
 public:
   ChibiESP();
-  
+  ~ChibiESP();
   int init();
-  void loop();
   void init_kernel_drivers();
-  InputManager& get_input_manager() { return _input_manager; } // Getter for input manager instance
+  void loop();
   int register_control_input_driver_module(ControlInputDriver* driver);
   int register_display_driver_module(DisplayDriver* driver);
 
@@ -30,9 +33,6 @@ public:
   int quitTask(const uint8_t taskID); // Gracefully quit a task by ID
   bool isTaskRunning(const uint8_t taskID);
   bool isProgramRunning(const std::string programName);
-
-  //input functions (Internal use only)
-  int register_input_listener(InputListener *&listener); // Register an input listener
 
   //input navigation events
   InputEvent getNavUpEvent();
@@ -46,21 +46,15 @@ public:
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);
   TwoWire* getI2cInterface(int bus);
 
-  static ChibiESP* instance;
+  //getters for cores reservations
+  int getKernelCoreId() const;
+  int getUserCoreId() const;
 private:
-  static void input_interrupt_callback(InputEvent &event);
-  void update_driver_state();
 
-  int _kernelCoreId, _userModeCoreId;
-  InputManager _input_manager; // Input manager instance
-  InterfaceManager *_interfaceManager;
-  DriverManager* _driverManager; // Driver manager instance
-  CESP_ProgramManager _program_manager; // Program manager instance
-  CESP_TaskManager _task_manager; // Task manager instance
-  std::vector <ControlInputDriver*> _controlInputDrivers; // List of input drivers registered
-  std::vector <DisplayDriver*> _displayDrivers; // List of drivers registered
-
-  uint32_t _slow_loop_timer;
+  ChibiKernel *_kernel; // Pointer to the kernel instance
+  
 };
+
+extern ChibiESP chibiESP; // Global instance of ChibiESP
 
 #endif //CHIBI_ESP_H

@@ -7,7 +7,6 @@
 #include <vector>
 #include <mutex>
 
-class ChibiESP;
 class InputListener;
 class View;
 class TaskViewRenderer;
@@ -17,7 +16,7 @@ class TaskViewRenderer;
  */
 class TaskInterface{
 public:
-    TaskInterface(bool enableGraphics, ChibiESP* kernelInstance, InputListener *listener);
+    TaskInterface(bool enableGraphics, InputListener *listener);
     ~TaskInterface();
 
     //input functions

@@ -18,20 +18,18 @@
 #include <vector>
 #include <memory>
 
-ChibiESP kernel;
-
 void user_setup_function(){
   CESP_Program buttonProgram("button program", button_program_setup, button_program_loop, button_program_closeup );
   CESP_Program blinkProgram("blink program", blink_program_setup, blink_program_loop, blink_program_closeup );
 
-  kernel.createProgram(buttonProgram);
-  kernel.createProgram(blinkProgram);
+  chibiESP.createProgram(buttonProgram);
+  chibiESP.createProgram(blinkProgram);
 
-  kernel.startProgram("button program");
+  chibiESP.startProgram("button program");
 }
 
 void setup() {
-  kernel.init();
+  chibiESP.init();
 
   CESP_ButtonDriver *BDriver = new CESP_ButtonDriver();
   CESP_ButtonDriverConfigStruct BConfig;
@@ -43,15 +41,15 @@ void setup() {
   BConfig.devices.push_back(button2);
   BDriver->configure(&BConfig);
 
-  kernel.register_control_input_driver_module(BDriver);
+  chibiESP.register_control_input_driver_module(BDriver);
 
-  kernel.init_kernel_drivers();
+  chibiESP.init_kernel_drivers();
 
   user_setup_function();
 }
 
 void loop() {
-  kernel.loop();
+  chibiESP.loop();
 
   delay(10);
 }

@@ -3,21 +3,20 @@
 #include "core/task/user_task.h"
 #include "core/kernel/components/input_manager.h"
 #include "core/task/task_interface.h"
-#include "chibiESP.h"
+#include "core/kernel/chibi_kernel.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
 #include <atomic>
 
-CESP_Task::CESP_Task(ChibiESP* kernelObj, const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
+CESP_Task::CESP_Task(ChibiKernel* kernelObj, const int kernelCoreId, const int userCoreId, const std::string& programName, const uint32_t taskID, 
     const void (*user_def_setup)(CESP_UserTaskData&), 
     const void (*user_def_loop)(CESP_UserTaskData&), 
     const void (*user_def_closeup)(CESP_UserTaskData&)) :
     _taskInfo(programName, taskID, kernelCoreId, userCoreId, user_def_setup, user_def_loop, user_def_closeup), // Initialize task status
     _kernelObj(kernelObj)
 {
-
     _taskInfo.userDataPtr = nullptr; // Initialize user data pointer to null
 
     _taskStatus.task_status = CESP_TaskStatus::TASK_STATUS_IDLE; // Set initial task status to idle
@@ -29,8 +28,16 @@ CESP_Task::CESP_Task(ChibiESP* kernelObj, const int kernelCoreId, const int user
 }
 
 CESP_Task::~CESP_Task(){
+    Logger::info("Deleted task");
+    delay(1000);
     if(_taskInterface) delete _taskInterface;
-}   
+}
+
+void mammita(void* arg){
+    while(true){
+        delay(1000);
+    }
+}
 
 void CESP_Task::start_task(){
     
@@ -39,7 +46,7 @@ void CESP_Task::start_task(){
     InputListener *inputListener = nullptr;
     _kernelObj->register_input_listener(inputListener);
 
-    _taskInterface = new TaskInterface(true, _kernelObj, inputListener);
+    _taskInterface = new TaskInterface(true, inputListener);
     TaskInterface& refInterface = *_taskInterface;
 
     //prepare the task memory   

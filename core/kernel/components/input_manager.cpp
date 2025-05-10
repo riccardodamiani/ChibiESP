@@ -13,7 +13,7 @@ int InputManager::createInputListener(InputListener *&listener){
 
     //find the first listener id available
     uint16_t listenerId = 0;
-    for(auto& listener : _inputListeners){
+    for(auto& curr_listener : _inputListeners){
         if(_inputListeners.find(listenerId) == _inputListeners.end()){  //map are always sorted for uint16_t key
             break; // Found an available listener ID
         }

@@ -1,12 +1,11 @@
 #include "chibiESP.h"
-#include "core/example_drivers/button.h"
-#include "core/logging/logging.h"
-#include "core/example_drivers/wheel.h"
-#include "core/kernel/components/interface_manager.h"
-#include "core/kernel/driver/display_driver.h"
-#include "core/kernel/components/driver_manager.h"
+#include "core/kernel/chibi_kernel.h"
+#include "core/kernel/components/input_manager.h"
+#include "core/structs/program.h"
+#include "core/structs/input_structs.h"
 
 //include cpp files that needs to be compiled
+#include "core/kernel/chibi_kernel.cpp"
 #include "core/logging/logging.cpp"
 #include "core/kernel/components/input_manager.cpp"
 #include "core/kernel/components/input_listener.cpp"
@@ -25,113 +24,133 @@
 #include "core/example_drivers/wheel.cpp"
 #include "core/example_drivers/button.cpp"
 
+ChibiESP chibiESP = ChibiESP(); // Global instance of ChibiESP
 
-
-ChibiESP* ChibiESP::instance = nullptr;
-
-ChibiESP::ChibiESP() : 
-  _task_manager(this)
+ChibiESP::ChibiESP()
 {
-  _interfaceManager = new InterfaceManager();
-  _driverManager = new DriverManager();
+  _kernel = new ChibiKernel(); // Initialize the kernel instance
 }
 
+ ChibiESP::~ChibiESP(){
+  if(_kernel){
+    delete _kernel; // Delete the kernel instance
+    _kernel = nullptr;
+  }
+ }
+
+ /**
+  * * @brief Initializes the ChibiESP library.
+  * * @details This function initializes the kernel and sets up the necessary components for the library to function. Must be called in the .ino file before using any other functions.
+  */
 int ChibiESP::init(){
-
-  instance = this; // Set the static instance pointer
-
-  Logger::init();
-  Logger::info("Starting ChibiESP..");
-  //get what core is reserved for kernel and for usermode
-  _kernelCoreId = xPortGetCoreID();
-  _userModeCoreId = 1 - _kernelCoreId;
-  _slow_loop_timer = millis();
-
-  Logger::info("Kernel running on core: %d", _kernelCoreId);
-
+  _kernel->init(); // Initialize the kernel
   return 0;
 }
 
+/**
+ * * @brief Initializes the kernel drivers.
+ * * @details This function initializes the kernel drivers, including input and display drivers. Must be called in the .ino file after init().
+ */
 void ChibiESP::init_kernel_drivers(){
-
-  _driverManager->init_control_input_drivers(ChibiESP::input_interrupt_callback); // Initialize control input drivers
-  _driverManager->init_display_drivers(this); // Initialize display drivers
+  _kernel->init_kernel_drivers(); // Initialize the kernel drivers
 }
 
-// Static wrapper function for wheel inputs
-void ChibiESP::input_interrupt_callback(InputEvent &event){
-  // Forward the call to the instance's _input_manager
-  if (instance) {
-    instance->get_input_manager().input_interrupt_callback(event); // Call the input manager's callback function
-  }
-}
-
+/**
+ * * @brief Registers a control input driver module.
+ * * @param driver The control input driver to be registered.
+ * * @return 0 on success, or an error code if the driver could not be registered.
+ * * @details This function registers a control input driver module with the kernel. The driver must implement the ControlInputDriver interface.
+ */
 int ChibiESP::register_control_input_driver_module(ControlInputDriver* driver){
-  return _driverManager->register_control_input_driver_module(driver); // Register the driver with the driver manager
+  return _kernel->register_control_input_driver_module(driver); // Register the driver with the driver manager
 }
 
+/**
+ * * @brief Registers a display driver module.
+ * * @param driver The display driver to be registered.
+ * * @return 0 on success, or an error code if the driver could not be registered.
+ * * @details This function registers a display driver module with the kernel. The driver must implement the DisplayDriver interface.
+ */
 int ChibiESP::register_display_driver_module(DisplayDriver* driver){
-  return _driverManager->register_display_driver_module(driver); // Register the driver with the driver manager
+  return _kernel->register_display_driver_module(driver); // Register the driver with the driver manager
 }
 
+/**
+ * * @brief Gets the display driver by name.
+ * * @param name The name of the display driver to be retrieved.
+ * * @return A pointer to the display driver, or nullptr if not found.
+ */
 DisplayDriver* ChibiESP::getDisplayDriver(std::string name){
-  return _driverManager->get_display_driver_by_name(name); // Get the display driver by name
+  return _kernel->getDisplayDriver(name); // Get the display driver by name
 }
 
-void ChibiESP::update_driver_state(){
-  _driverManager->update_control_input_drivers_state(); // Update the state of control input drivers
-}
-
+/**
+ * * @brief Main loop function for the ChibiESP library.
+ * * @details This function should be called in the main loop of the Arduino sketch. It handles the kernel's loop function and updates the state of the system.
+ */
 void ChibiESP::loop(){
-  // update hardware state
-  update_driver_state();
-
-  //unfrequent tasks
-  if(millis() - _slow_loop_timer){
-    _slow_loop_timer = millis();
-    _task_manager.update();
-    _input_manager.update();
-  }
+  _kernel->loop(); // Call the kernel's loop function
 
 }
 
+/**
+ * * @brief Gets the kernel core ID.
+ * * @return The core ID of the kernel.
+ */
+int ChibiESP::getKernelCoreId() const{
+  return _kernel->getKernelCoreId(); // Get the kernel core ID
+}
+
+/**
+ * * @brief Gets the user core ID.
+ * * @return The core ID of the user mode.
+ */
+int ChibiESP::getUserCoreId() const{
+  return _kernel->getUserCoreId(); // Get the user core ID
+}
+
+/**
+ * * @brief Registers an I2C interface.
+ * * @param bus The I2C bus number.
+ * * @param sda_pin The SDA pin number.
+ * * @param scl_pin The SCL pin number.
+ * * @return true on success, false on failure.
+ */
 bool ChibiESP::registerI2cInterface(int bus, int sda_pin, int scl_pin){
-  return _interfaceManager->registerI2cInterface(bus, sda_pin, scl_pin);
+  return _kernel->registerI2cInterface(bus, sda_pin, scl_pin);
 }
 
+/**
+ * * @brief Gets the I2C interface by bus number.
+ * * @param bus The I2C bus number.
+ * * @return A pointer to the I2C interface, or nullptr if not found.
+ */
 TwoWire* ChibiESP::getI2cInterface(int bus){
-  return _interfaceManager->getI2cInterface(bus);
+  return _kernel->getI2cInterface(bus);
 }
 
-int ChibiESP::register_input_listener(InputListener *&listener){
-  return _input_manager.createInputListener(listener); // Register a new input listener
-}
-
+/**
+ * * @brief Gets the navigation up event.
+ * * @return The navigation up event.
+ */
 InputEvent ChibiESP::getNavUpEvent(){
-  InputEvent event;
-  event.type = InputEventType::INPUT_EVENT_WHEEL;
-  event.deviceID = 0;
-  event.eventData = 1;
-  event.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
-  return event;
+  return _kernel->getNavUpEvent(); // Get the navigation up event from the kernel
 }
 
+/**
+ * * @brief Gets the navigation down event.
+ * * @return The navigation down event.
+ */
 InputEvent ChibiESP::getNavDownEvent(){
-  InputEvent event;
-  event.type = InputEventType::INPUT_EVENT_WHEEL;
-  event.deviceID = 0;
-  event.eventData = -1;
-  event.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
-  return event;
+  return _kernel->getNavDownEvent(); // Get the navigation down event from the kernel
 }
 
+/**
+ * * @brief Gets the navigation select event.
+ * * @return The navigation select event.
+ */
 InputEvent ChibiESP::getNavSelectEvent(){
-  InputEvent event;
-  event.type = InputEventType::INPUT_EVENT_KEY;
-  event.deviceID = 2;
-  event.eventData = 0;
-  event.deviceEventType = static_cast<uint8_t>(KeyEventType::KEY_EVENT_RELEASED);
-  return event;
+  return _kernel->getNavSelectEvent(); // Get the navigation select event from the kernel
 }
 
 /**
@@ -140,7 +159,7 @@ InputEvent ChibiESP::getNavSelectEvent(){
  * * @return The task ID of the created program, or an error code if the program could not be created.
  */
 int ChibiESP::createProgram(CESP_Program program){
-  return _program_manager.register_program(program); // Register the program with the program manager
+  return _kernel->createProgram(program); // Register the program with the program manager
 }
 
 /**
@@ -149,22 +168,7 @@ int ChibiESP::createProgram(CESP_Program program){
  * * @return The task ID of the started program, or an error code if the program could not be started.
  */
 int ChibiESP::startProgram(std::string programName){
-  CESP_Program* program = nullptr; // Pointer to hold the program
-  if(!_program_manager.get_program_by_name(programName, program)){
-    return -1; // Error: program not found
-  }
-
-  // Create a new task for the program
-  int taskID = _task_manager.create_new_task(program);
-  if(taskID < 0){
-    return -2; // Error: unable to create task
-  }
-  int started = _task_manager.start_task(taskID); // Start the task
-
-  if(started < 0){
-    return -3; // Error: unable to start task
-  }
-  return taskID; // Return the task ID
+  return _kernel->startProgram(programName); // Start the program by its name
 }
 
 /**
@@ -173,8 +177,7 @@ int ChibiESP::startProgram(std::string programName){
  * * @return 0 on success, or an error code if the task could not
  */
 int ChibiESP::killTask(const uint8_t taskID){
-
-  return _task_manager.kill_task(taskID); // Kill the program by its ID
+return _kernel->killTask(taskID); // Forcefully kill the program by its ID
 }
 
 /**
@@ -182,7 +185,7 @@ int ChibiESP::killTask(const uint8_t taskID){
  * * @param taskID The ID of the task to quit.
  */
 int ChibiESP::quitTask(const uint8_t taskID){
-  return _task_manager.quit_task(taskID); // Gracefully quit the program by its ID
+  return _kernel->quitTask(taskID); // Gracefully quit the program by its ID
 }
 
 /**
@@ -190,7 +193,7 @@ int ChibiESP::quitTask(const uint8_t taskID){
  * * @param taskID The ID of the task to check
  */
 bool ChibiESP::isTaskRunning(const uint8_t taskID){
-  return _task_manager.is_task_alive(taskID);
+  return _kernel->isTaskRunning(taskID); // Check if the task is alive
 }
 
 /**
@@ -198,5 +201,5 @@ bool ChibiESP::isTaskRunning(const uint8_t taskID){
  * * @param programName The name of the program to check
  */
 bool ChibiESP::isProgramRunning(const std::string programName){
-  return _task_manager.is_program_alive(programName);
+  return _kernel->isProgramRunning(programName); // Check if the program is alive
 }

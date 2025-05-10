@@ -8,7 +8,6 @@
 
 class ControlInputDriver;
 class DisplayDriver;
-class ChibiESP;
 
 struct ControlInputControlStruct_t{
     ControlInputDriver* driver;
@@ -24,7 +23,7 @@ public:
     int register_display_driver_module(DisplayDriver* driver);
 
     void init_control_input_drivers(void input_interrupt_callback(InputEvent &event));
-    void init_display_drivers(ChibiESP* kernelInstance);
+    void init_display_drivers();
 
     //control input driver functions
     int update_control_input_drivers_state();

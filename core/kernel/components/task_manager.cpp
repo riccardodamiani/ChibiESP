@@ -1,13 +1,19 @@
 #include "core/kernel/components/task_manager.h"
 #include "core/task/task.h"
+#include <chibiESP.h>
 
 #include <map>
 #include <mutex>
 
-CESP_TaskManager::CESP_TaskManager(ChibiESP* kernelObj) : 
+CESP_TaskManager::CESP_TaskManager(ChibiKernel* kernelObj) : 
 _kernel_obj(kernelObj)
 {
-    
+}
+
+void CESP_TaskManager::Init(){
+    Logger::info("Address of chibiESP: %p", (void*)&chibiESP);
+    _kernelCoreId = chibiESP.getKernelCoreId(); // Get the kernel core ID
+    _userCoreId = chibiESP.getUserCoreId(); // Get the user core ID
 }
 
 void CESP_TaskManager::update(){
