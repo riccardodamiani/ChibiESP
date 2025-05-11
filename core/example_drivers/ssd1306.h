@@ -11,10 +11,12 @@ public:
     int configure(void* arg) override;
     int init() override;
     int deinit(void* arg) override;
-    int clearScreen();
-    int updateScreen();
+    int get_device_info(int deviceId, DisplayDeviceInfo_t &info) override;
+    int clearScreen() override;
+    int updateScreen() override;
     int drawText(std::string text, int16_t x, int16_t y, int16_t size, BW_Color bg_color, BW_Color fg_color) override;
     int getTextSize(std::string text, int16_t x, int16_t y, int16_t size, int16_t *real_x, int16_t *real_y, uint16_t* width, uint16_t* height) override;
+    
 private:
     int _screenWidth, _screenHeight;
     Adafruit_SSD1306* _displayObj;

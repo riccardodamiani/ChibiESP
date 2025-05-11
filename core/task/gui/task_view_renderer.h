@@ -11,6 +11,7 @@ public:
     bool renderView(ViewRenderStruct &renderView);
 private:
     DisplayDriver *_displayDriver;
+    uint16_t _screenWidth, _screenHeight;
 
 };
 

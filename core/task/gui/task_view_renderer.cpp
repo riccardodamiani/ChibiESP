@@ -7,7 +7,23 @@
 
 TaskViewRenderer::TaskViewRenderer(){
     _displayDriver = chibiESP.getDisplayDriver("ssd1306");
-    if(!_displayDriver) Logger::error("No fucking display driver");
+    if(!_displayDriver){
+        Logger::error("View renderer: No available display driver");
+        _screenWidth = 0;
+        _screenHeight = 0;
+        return;
+    }
+
+    DisplayDeviceInfo_t info;
+    if(_displayDriver->get_device_info(0, info) < 0){
+        Logger::error("View renderer: Could not get device info");
+        _screenWidth = 0;
+        _screenHeight = 0;
+        _displayDriver = nullptr;
+        return;
+    } 
+    _screenWidth = info.screenWidth;
+    _screenHeight = info.screenHeight;
 }
 
 bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
@@ -21,9 +37,7 @@ bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
     }
     
     //for now hardcoded. TODO: should come from the driver
-    int displayWidth = 128;
-    int displayHeight = 64;
-    int half_screen_size =  displayHeight / 2;
+    int half_screen_size =  _screenHeight / 2;
     int upperTextScreenPixel;
     int firstElementOnScreen = 0;
 
@@ -47,7 +61,7 @@ bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
         BW_Color fg_color = renderView.focusedItemIndex == i ? BW_Color::CESP_BLACK : BW_Color::CESP_WHITE;
 
         int displayItemRectY = renderView.elements[i].real_y - offsetY;
-        if(displayItemRectY > displayHeight){   //done drawing stuff
+        if(displayItemRectY > _screenHeight){   //done drawing stuff
             break;
         }
         //Logger::info("%d, %d, %d, %d, %s", renderView.elements[i].view_x, renderView.elements[i].view_y - offsetY, 

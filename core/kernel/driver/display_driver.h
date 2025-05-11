@@ -15,6 +15,21 @@ struct RGB_Color{
     uint8_t r, g, b;
 };
 
+enum class DisplayColorType {
+    Monochrome,    // 1 bit per pixel
+    Grayscale,     // es. 8 bit per pixel
+    RGB,           // es. 16 o 24 bit
+    Unknown        // fallback
+};
+
+struct DisplayDeviceInfo_t{
+    uint16_t screenWidth, screenHeight;
+    DisplayColorType colorType;
+    uint16_t colorDepth; // in bits
+    std::string displayModel;
+    uint32_t controllerId;
+};
+
 class DisplayDriver{
 public:
     DisplayDriver();
@@ -42,7 +57,7 @@ public:
 
     //info functions
     virtual int getTextSize(std::string text, int16_t x, int16_t y, int16_t size, int16_t *real_x, int16_t *real_y, uint16_t* width, uint16_t* height);
-    virtual int get_device_info(void* arg);
+    virtual int get_device_info(int deviceId, DisplayDeviceInfo_t &info);
     std::string get_name() const { return _name; }
 protected:
     std::string _name; // Name of the driver

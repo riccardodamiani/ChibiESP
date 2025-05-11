@@ -45,6 +45,16 @@ int SSD1306::deinit(void* arg){
     return 0;
 }
 
+int SSD1306::get_device_info(int deviceId, DisplayDeviceInfo_t &info){
+    info.screenWidth = _screenWidth;
+    info.screenHeight = _screenHeight;
+    info.colorType = DisplayColorType::Monochrome;
+    info.colorDepth = 1; // 1 bit per pixel
+    info.displayModel = "SSD1306";
+    info.controllerId = 0;
+    return 0;
+}
+
 int SSD1306::updateScreen(){
     _displayObj->display();
     return 0;

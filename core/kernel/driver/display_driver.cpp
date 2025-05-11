@@ -25,7 +25,7 @@ int DisplayDriver::configure(void* arg){
 /**
  * @brief TODO: Function to get device information
  */
-int DisplayDriver::get_device_info(void* arg){
+int DisplayDriver::get_device_info(int deviceId, DisplayDeviceInfo_t &info){
     return 0;
 }
 
