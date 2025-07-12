@@ -1,15 +1,10 @@
+// Copyright (c) 2025 Riccardo Damiani
+// Licensed under the Apache License, Version 2.0
+// See LICENSE file in the project root for full license information.
+
 #include <chibiESP.h>
-#include <core/kernel/device/control_input_device.h>
 #include <core/base_devices/button.h>
-#include <core/base_devices/wheel.h>
-#include <core/base_devices/ssd1306.h>
-#include <core/task/user_task.h>
-#include <core/task/task_memory.h>
-#include <core/task/task_interface.h>
-#include <core/structs/input_structs.h>
 #include <core/logging/logging.h>
-#include <core/task/gui/view.h>
-#include <core/task/gui/gui_event.h>
 #include <core/structs/program.h>
 
 #include "button_program.h"

@@ -1,3 +1,7 @@
+// Copyright (c) 2025 Riccardo Damiani
+// Licensed under the Apache License, Version 2.0
+// See LICENSE file in the project root for full license information.
+
 #include "core/kernel/components/device_manager.h"
 #include "core/kernel/device/control_input_device.h"
 #include "core/kernel/device/display_device.h"

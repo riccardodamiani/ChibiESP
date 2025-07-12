@@ -1,3 +1,7 @@
+// Copyright (c) 2025 Riccardo Damiani
+// Licensed under the Apache License, Version 2.0
+// See LICENSE file in the project root for full license information.
+
 #include "core/kernel/components/input_listener.h"
 #include "core/kernel/components/input_manager.h"
 #include "core/logging/logging.h"

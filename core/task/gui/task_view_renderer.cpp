@@ -1,3 +1,7 @@
+// Copyright (c) 2025 Riccardo Damiani
+// Licensed under the Apache License, Version 2.0
+// See LICENSE file in the project root for full license information.
+
 #include "core/task/gui/task_view_renderer.h"
 #include "core/task/gui/view_render.h"
 #include "core/logging/logging.h"
