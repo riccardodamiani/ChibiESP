@@ -1,10 +1,10 @@
 #include "core/kernel/chibi_kernel.h"
-#include "core/example_drivers/button.h"
+#include "core/base_devices/button.h"
 #include "core/logging/logging.h"
-#include "core/example_drivers/wheel.h"
+#include "core/base_devices/wheel.h"
 #include "core/kernel/components/interface_manager.h"
-#include "core/kernel/driver/display_driver.h"
-#include "core/kernel/components/driver_manager.h"
+#include "core/kernel/device/display_device.h"
+#include "core/kernel/components/device_manager.h"
 
 ChibiKernel* ChibiKernel::instance = nullptr;
 
@@ -12,7 +12,7 @@ ChibiKernel::ChibiKernel() :
   _task_manager(this)
 {
   _interfaceManager = new InterfaceManager();
-  _driverManager = new DriverManager();
+  _deviceManager = new DeviceManager();
 }
 
 int ChibiKernel::init(){
@@ -33,10 +33,10 @@ int ChibiKernel::init(){
   return 0;
 }
 
-void ChibiKernel::init_kernel_drivers(){
+void ChibiKernel::init_kernel_devices(){
 
-  _driverManager->init_control_input_drivers(ChibiKernel::input_interrupt_callback); // Initialize control input drivers
-  _driverManager->init_display_drivers(); // Initialize display drivers
+  _deviceManager->init_control_input_devices(ChibiKernel::input_interrupt_callback); // Initialize control input devices
+  _deviceManager->init_display_devices(); // Initialize display devices
 }
 
 // Static wrapper function for wheel inputs
@@ -47,25 +47,25 @@ void ChibiKernel::input_interrupt_callback(InputEvent &event){
   }
 }
 
-int ChibiKernel::register_control_input_driver_module(ControlInputDriver* driver){
-  return _driverManager->register_control_input_driver_module(driver); // Register the driver with the driver manager
+int ChibiKernel::register_control_input_device(ControlInputDevice* device){
+  return _deviceManager->register_control_input_device(device); // Register the device with the device manager
 }
 
-int ChibiKernel::register_display_driver_module(DisplayDriver* driver){
-  return _driverManager->register_display_driver_module(driver); // Register the driver with the driver manager
+int ChibiKernel::register_display_device(DisplayDevice* device){
+  return _deviceManager->register_display_device(device); // Register the device with the device manager
 }
 
-DisplayDriver* ChibiKernel::getDisplayDriver(std::string name){
-  return _driverManager->get_display_driver_by_name(name); // Get the display driver by name
+DisplayDevice* ChibiKernel::getDisplayDevice(uint32_t deviceId){
+  return _deviceManager->get_display_device_by_id(deviceId); // Get the display device by id
 }
 
-void ChibiKernel::update_driver_state(){
-  _driverManager->update_control_input_drivers_state(); // Update the state of control input drivers
+void ChibiKernel::update_device_state(){
+  _deviceManager->update_control_input_devices_state(); // Update the state of control input devices
 }
 
 void ChibiKernel::loop(){
   // update hardware state
-  update_driver_state();
+  update_device_state();
 
   //unfrequent tasks
   if(millis() - _slow_loop_timer){

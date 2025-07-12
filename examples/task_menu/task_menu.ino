@@ -1,15 +1,8 @@
 #include <chibiESP.h>
-#include <core/kernel/driver/control_input_driver.h>
-#include <core/example_drivers/button.h>
-#include <core/example_drivers/wheel.h>
-#include <core/example_drivers/ssd1306.h>
-#include <core/task/user_task.h>
-#include <core/task/task_memory.h>
-#include <core/task/task_interface.h>
-#include <core/structs/input_structs.h>
+#include <core/base_devices/button.h>
+#include <core/base_devices/wheel.h>
+#include <core/base_devices/ssd1306.h>
 #include <core/logging/logging.h>
-#include <core/task/gui/view.h>
-#include <core/task/gui/gui_event.h>
 #include <core/structs/program.h>
 
 #include "menu_program.h"
@@ -28,33 +21,40 @@ void user_setup_function(){
 void setup() {
   chibiESP.init();
 
-  CESP_ButtonDriver *BDriver = new CESP_ButtonDriver();
-  CESP_ButtonDriverConfigStruct BConfig;
-  CESP_ButtonConfigStruct button0 = {0, 1, true, 50};
-  CESP_ButtonConfigStruct button1 = {1, 2, true, 50};
-  CESP_ButtonConfigStruct button2 = {2, 7, true, 50};
-  BConfig.devices.push_back(button0);
-  BConfig.devices.push_back(button1);
-  BConfig.devices.push_back(button2);
-  BDriver->configure(&BConfig);
+  //initialize the buttons
+  ButtonDeviceConfigStruct button1Config = {1, true, 50};
+  ButtonDeviceConfigStruct button2Config = {2, true, 50};
+  ButtonDeviceConfigStruct button3Config = {7, true, 50};
+  ButtonDevice *button1 = new ButtonDevice(0);
+  ButtonDevice *button2 = new ButtonDevice(1);
+  ButtonDevice *button3 = new ButtonDevice(2);
+  button1->configure(button1Config);
+  button2->configure(button2Config);
+  button3->configure(button3Config);
 
-  CESP_WheelDriver *WDriver = new CESP_WheelDriver();
-  CESP_WheelDriverConfigStruct WConfig;
-  CESP_WheelConfigStruct navigationWheel = {0, 4, 6, true, 50};
-  WConfig.devices.push_back(navigationWheel);
-  WDriver->configure(&WConfig);
+  chibiESP.register_control_input_device(button1);
+  chibiESP.register_control_input_device(button2);
+  chibiESP.register_control_input_device(button3);
 
-  chibiESP.register_control_input_driver_module(BDriver);
-  chibiESP.register_control_input_driver_module(WDriver);
+  //initialize the wheel encoder
+  WheelDevice *wheel = new WheelDevice(0);
+  WheelDeviceConfigStruct wheelConfig = {4, 6, true, 50};
+  wheel->configure(wheelConfig);
+  chibiESP.register_control_input_device(wheel);
 
+  //initialize the I2C interface for the display
   chibiESP.registerI2cInterface(0, 9, 8);
 
-  SSD1306 *displayDriver = new SSD1306();
-  displayDriver->configure(nullptr);
-  chibiESP.register_display_driver_module(displayDriver);
+  //initialize the display device
+  SSD1306 *display = new SSD1306(0);
+  SSD1306ConfigStruct displayConfig = {128, 64, 0};
+  display->configure(displayConfig);
+  chibiESP.register_display_device(display);
 
-  chibiESP.init_kernel_drivers();
+  //initialize all system devices
+  chibiESP.init_kernel_devices();
 
+  //enter setup loop
   user_setup_function();
 }
 

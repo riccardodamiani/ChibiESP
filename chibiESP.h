@@ -9,22 +9,21 @@
 #include <stdint.h>
 
 class InputListener;
-class CESP_Driver;
-class DisplayDriver;
+class DisplayDevice;
 class InterfaceManager;
 class TwoWire;
 class ChibiKernel;
-class ControlInputDriver;
+class ControlInputDevice;
 
 class ChibiESP{
 public:
   ChibiESP();
   ~ChibiESP();
   int init();
-  void init_kernel_drivers();
+  void init_kernel_devices();
   void loop();
-  int register_control_input_driver_module(ControlInputDriver* driver);
-  int register_display_driver_module(DisplayDriver* driver);
+  int register_control_input_device(ControlInputDevice* device);
+  int register_display_device(DisplayDevice* device);
 
   //program functions
   int createProgram(CESP_Program program);
@@ -39,8 +38,8 @@ public:
   InputEvent getNavDownEvent();
   InputEvent getNavSelectEvent();
 
-  //drivers getter
-  DisplayDriver* getDisplayDriver(std::string name);
+  //devices getter
+  DisplayDevice* getDisplayDevice(uint32_t deviceId);
 
   //interfaces
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);

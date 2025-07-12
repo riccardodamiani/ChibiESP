@@ -1,37 +1,38 @@
-#include "core/example_drivers/ssd1306.h"
+#include "core/base_devices/ssd1306.h"
 #include "core/logging/logging.h"
-#include "core/kernel/driver/display_driver.h"
+#include "core/kernel/device/display_device.h"
 #include "chibiESP.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <Wire.h>
 
-SSD1306::SSD1306():
+SSD1306::SSD1306(uint32_t deviceId) :
+    DisplayDevice(deviceId),
     _displayObj(nullptr)
 {
 
 }
 
-int SSD1306::configure(void* arg){
-    _name = "ssd1306";
-    _screenWidth = 128;
-    _screenHeight = 64;
+int SSD1306::configure(SSD1306ConfigStruct config){
+    _screenWidth = config.screenWidth;
+    _screenHeight = config.screenHeight;
+    _i2c_bus = config.i2c_bus;
     return 0;
 }
 
 int SSD1306::init(){
-    //This driver needs a i2c interface handled by the kernel
+    //This device needs a i2c interface handled by the kernel
     //NEVER close the TwoWire interface since it's managed by the system
-    TwoWire* i2cInterface = chibiESP.getI2cInterface(0);
+    TwoWire* i2cInterface = chibiESP.getI2cInterface(_i2c_bus);
     if(i2cInterface == nullptr){
-        Logger::error("SSD1306 driver error: i2c interface is nullptr");
+        Logger::error("SSD1306 device error: i2c interface is nullptr");
         return -1;
     }
 
     _displayObj = new Adafruit_SSD1306(_screenWidth, _screenHeight, i2cInterface, -1);
     if (!_displayObj->begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-        Logger::error("SSD1306 driver error: could not initialize display");
+        Logger::error("SSD1306 device error: could not initialize display");
         return -1;
     }
     return 0;
@@ -45,7 +46,7 @@ int SSD1306::deinit(void* arg){
     return 0;
 }
 
-int SSD1306::get_device_info(int deviceId, DisplayDeviceInfo_t &info){
+int SSD1306::get_device_info(DisplayDeviceInfo_t &info){
     info.screenWidth = _screenWidth;
     info.screenHeight = _screenHeight;
     info.colorType = DisplayColorType::Monochrome;

@@ -9,20 +9,20 @@
 #include "core/logging/logging.cpp"
 #include "core/kernel/components/input_manager.cpp"
 #include "core/kernel/components/input_listener.cpp"
-#include "core/kernel/driver/control_input_driver.cpp"
-#include "core/kernel/driver/display_driver.cpp"
+#include "core/kernel/device/control_input_device.cpp"
+#include "core/kernel/device/display_device.cpp"
 #include "core/kernel/components/task_manager.cpp"
 #include "core/kernel/components/program_manager.cpp"
-#include "core/kernel/components/driver_manager.cpp"
+#include "core/kernel/components/device_manager.cpp"
 #include "core/kernel/components/interface_manager.cpp"
 #include "core/task/task.cpp"
 #include "core/task/task_interface.cpp"
 #include "core/task/gui/gui_element.cpp"
 #include "core/task/gui/task_view_renderer.cpp"
 #include "core/task/gui/view.cpp"
-#include "core/example_drivers/ssd1306.cpp"
-#include "core/example_drivers/wheel.cpp"
-#include "core/example_drivers/button.cpp"
+#include "core/base_devices/ssd1306.cpp"
+#include "core/base_devices/wheel.cpp"
+#include "core/base_devices/button.cpp"
 
 ChibiESP chibiESP = ChibiESP(); // Global instance of ChibiESP
 
@@ -48,40 +48,40 @@ int ChibiESP::init(){
 }
 
 /**
- * * @brief Initializes the kernel drivers.
- * * @details This function initializes the kernel drivers, including input and display drivers. Must be called in the .ino file after init().
+ * * @brief Initializes the kernel devices.
+ * * @details This function initializes the kernel devices, including input and display devices. Must be called in the .ino file after init().
  */
-void ChibiESP::init_kernel_drivers(){
-  _kernel->init_kernel_drivers(); // Initialize the kernel drivers
+void ChibiESP::init_kernel_devices(){
+  _kernel->init_kernel_devices(); // Initialize the kernel devices
 }
 
 /**
- * * @brief Registers a control input driver module.
- * * @param driver The control input driver to be registered.
- * * @return 0 on success, or an error code if the driver could not be registered.
- * * @details This function registers a control input driver module with the kernel. The driver must implement the ControlInputDriver interface.
+ * * @brief Registers a control input device.
+ * * @param device The control input device to be registered.
+ * * @return 0 on success, or an error code if the device could not be registered.
+ * * @details This function registers a control input device with the kernel. The device must implement the ControlInputDevice interface.
  */
-int ChibiESP::register_control_input_driver_module(ControlInputDriver* driver){
-  return _kernel->register_control_input_driver_module(driver); // Register the driver with the driver manager
+int ChibiESP::register_control_input_device(ControlInputDevice* device){
+  return _kernel->register_control_input_device(device); // Register the device with the device manager
 }
 
 /**
- * * @brief Registers a display driver module.
- * * @param driver The display driver to be registered.
- * * @return 0 on success, or an error code if the driver could not be registered.
- * * @details This function registers a display driver module with the kernel. The driver must implement the DisplayDriver interface.
+ * * @brief Registers a display device
+ * * @param device The display device to be registered.
+ * * @return 0 on success, or an error code if the device could not be registered.
+ * * @details This function registers a display device with the kernel. The device must implement the DisplayDevice interface.
  */
-int ChibiESP::register_display_driver_module(DisplayDriver* driver){
-  return _kernel->register_display_driver_module(driver); // Register the driver with the driver manager
+int ChibiESP::register_display_device(DisplayDevice* device){
+  return _kernel->register_display_device(device); // Register the device with the device manager
 }
 
 /**
- * * @brief Gets the display driver by name.
- * * @param name The name of the display driver to be retrieved.
- * * @return A pointer to the display driver, or nullptr if not found.
+ * * @brief Gets the display device by id.
+ * * @param deviceId the id of the display device to be retrieved.
+ * * @return A pointer to the display device, or nullptr if not found.
  */
-DisplayDriver* ChibiESP::getDisplayDriver(std::string name){
-  return _kernel->getDisplayDriver(name); // Get the display driver by name
+DisplayDevice* ChibiESP::getDisplayDevice(uint32_t deviceId){
+  return _kernel->getDisplayDevice(deviceId); // Get the display device by id
 }
 
 /**

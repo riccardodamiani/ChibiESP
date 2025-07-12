@@ -1,17 +1,23 @@
 #ifndef SSD1306_DISPLAY_H
 #define SSD1306_DISPLAY_H
 
-#include "core/kernel/driver/display_driver.h"
+#include "core/kernel/device/display_device.h"
 
 class Adafruit_SSD1306;
 
-class SSD1306 : public DisplayDriver{
+struct SSD1306ConfigStruct {
+    int screenWidth;  // Width of the display in pixels
+    int screenHeight; // Height of the display in pixels
+    uint8_t i2c_bus; // I2C bus number
+};
+
+class SSD1306 : public DisplayDevice{
 public:
-    SSD1306();
-    int configure(void* arg) override;
+    SSD1306(uint32_t deviceId);
+    int configure(SSD1306ConfigStruct config);
     int init() override;
     int deinit(void* arg) override;
-    int get_device_info(int deviceId, DisplayDeviceInfo_t &info) override;
+    int get_device_info(DisplayDeviceInfo_t &info) override;
     int clearScreen() override;
     int updateScreen() override;
     int drawText(std::string text, int16_t x, int16_t y, int16_t size, BW_Color bg_color, BW_Color fg_color) override;
@@ -19,6 +25,7 @@ public:
     
 private:
     int _screenWidth, _screenHeight;
+    uint8_t _i2c_bus; // I2C bus number
     Adafruit_SSD1306* _displayObj;
 
 };

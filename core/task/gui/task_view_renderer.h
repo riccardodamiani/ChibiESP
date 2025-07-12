@@ -3,14 +3,14 @@
 
 #include "core/task/gui/view_render.h"
 
-class DisplayDriver;
+class DisplayDevice;
 
 class TaskViewRenderer{
 public:
     TaskViewRenderer();
     bool renderView(ViewRenderStruct &renderView);
 private:
-    DisplayDriver *_displayDriver;
+    DisplayDevice *_displayDevice;
     uint16_t _screenWidth, _screenHeight;
 
 };

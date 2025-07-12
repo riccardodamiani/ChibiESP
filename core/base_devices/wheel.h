@@ -6,24 +6,22 @@
 #include <atomic>
 #include <memory>
 
-#include "core/kernel/driver/control_input_driver.h"
+#include "core/kernel/device/control_input_device.h"
 #include "core/structs/input_structs.h"
 
-struct CESP_WheelConfigStruct{
-  uint8_t deviceID;
+const uint8_t MAX_WHEEL_DEVICES = 5; // Maximum number of wheel devices
+
+struct WheelDeviceConfigStruct{
   uint8_t s1_gpio, s2_gpio; // GPIO pins for the wheel
   bool invert; // invert rotation direction
   uint32_t debounce_time_ms; // Debounce time in milliseconds
 };
 
-struct CESP_WheelDriverConfigStruct{
-  std::vector <CESP_WheelConfigStruct> devices;
-};
-
-class CESP_WheelDriver : public ControlInputDriver {
+class WheelDevice : public ControlInputDevice {
 public:
-  int configure(void* arg) override;
-  int init(ControlDriverInitStruct_t& init_struct) override;
+  WheelDevice(uint32_t deviceId);
+  int configure(WheelDeviceConfigStruct config);
+  int init(ControlDeviceInitStruct_t& init_struct) override;
   int deinit() override;
   int update() override;
   int get_device_info(void* arg) override;
@@ -39,11 +37,18 @@ struct InternalDeviceInfo{
   std::atomic <uint32_t> last_change_time_ms; // Last time the button state changed
 };
 
-  void update_device_state(const std::unique_ptr<InternalDeviceInfo>& device);
-  static void update_device_isr();
+  void update_device_state();
+  static void update_isr();
+  void device_update_isr();
 
-  static std::vector<std::unique_ptr<InternalDeviceInfo>> _devices;
-  void (*_input_interrupt)(InputEvent&); // Callback function for button events
+  // Callback function for button events
+  void (*_input_interrupt)(InputEvent&); 
+
+  // Static vector to hold all instances of WheelDevice
+  static std::vector <WheelDevice *> _instances;
+  
+  //device data
+  InternalDeviceInfo* _device;
 };
 
 #endif //WHEEL_H

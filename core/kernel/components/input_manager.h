@@ -1,7 +1,7 @@
 /**
  * @file input_manager.h
  * @brief Input Manager header file
- * @details The InputManager receive inputs events from the control input drivers (Button, wheel, etc) and dispatch them to the registered input destinations (applications, window input manager, etc).
+ * @details The InputManager receive inputs events from the control input devices (Button, wheel, etc) and dispatch them to the registered input destinations (applications, window input manager, etc).
  */
 
 #ifndef INPUT_MANAGER_H

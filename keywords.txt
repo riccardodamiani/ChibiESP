@@ -1,12 +1,13 @@
 ChibiESP	KEYWORD1
 
-CESP_ButtonDriver   KEYWORD1
-CESP_ButtonConfigStruct KEYWORD2
-CESP_ButtonDriverConfigStruct   KEYWORD2
+ButtonDevice   KEYWORD1
+ButtonDeviceConfigStruct KEYWORD2
 
-CESP_WheelDriver    KEYWORD1
-CESP_WheelConfigStruct  KEYWORD2
-CESP_WheelDriverConfigStruct    KEYWORD2
+WheelDevice    KEYWORD1
+WheelDeviceConfigStruct  KEYWORD2
+
+SSD1306     KEYWORD1
+SSD1306ConfigStruct     KEYWORD2
 
 InputEvent  KEYWORD2
 InputEventType  KEYWORD2

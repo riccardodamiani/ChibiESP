@@ -1,5 +1,5 @@
-#ifndef DISPLAY_DRIVER_H
-#define DISPLAY_DRIVER_H
+#ifndef DISPLAY_DEVICE_H
+#define DISPLAY_DEVICE_H
 
 #include <string>
 #include <stdint.h>
@@ -30,10 +30,10 @@ struct DisplayDeviceInfo_t{
     uint32_t controllerId;
 };
 
-class DisplayDriver{
+class DisplayDevice{
 public:
-    DisplayDriver();
-    virtual int configure(void* arg);
+    DisplayDevice(uint32_t deviceId);
+    DisplayDevice() = delete;
     virtual int init();
     virtual int deinit(void* arg);
     virtual int updateScreen();
@@ -57,10 +57,10 @@ public:
 
     //info functions
     virtual int getTextSize(std::string text, int16_t x, int16_t y, int16_t size, int16_t *real_x, int16_t *real_y, uint16_t* width, uint16_t* height);
-    virtual int get_device_info(int deviceId, DisplayDeviceInfo_t &info);
-    std::string get_name() const { return _name; }
-protected:
-    std::string _name; // Name of the driver
+    virtual int get_device_info(DisplayDeviceInfo_t &info);
+    uint32_t get_device_id() const { return _deviceId; }
+private:
+    uint32_t _deviceId; // Device ID
 };
 
-#endif  //DISPLAY_DRIVER_H
+#endif  //DISPLAY_DEVICE_H

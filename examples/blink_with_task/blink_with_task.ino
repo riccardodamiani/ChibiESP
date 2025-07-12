@@ -1,8 +1,8 @@
 #include <chibiESP.h>
-#include <core/kernel/driver/control_input_driver.h>
-#include <core/example_drivers/button.h>
-#include <core/example_drivers/wheel.h>
-#include <core/example_drivers/ssd1306.h>
+#include <core/kernel/device/control_input_device.h>
+#include <core/base_devices/button.h>
+#include <core/base_devices/wheel.h>
+#include <core/base_devices/ssd1306.h>
 #include <core/task/user_task.h>
 #include <core/task/task_memory.h>
 #include <core/task/task_interface.h>
@@ -31,19 +31,22 @@ void user_setup_function(){
 void setup() {
   chibiESP.init();
 
-  CESP_ButtonDriver *BDriver = new CESP_ButtonDriver();
-  CESP_ButtonDriverConfigStruct BConfig;
-  CESP_ButtonConfigStruct button0 = {0, 1, true, 50};
-  CESP_ButtonConfigStruct button1 = {1, 2, true, 50};
-  CESP_ButtonConfigStruct button2 = {2, 7, true, 50};
-  BConfig.devices.push_back(button0);
-  BConfig.devices.push_back(button1);
-  BConfig.devices.push_back(button2);
-  BDriver->configure(&BConfig);
+  ButtonDeviceConfigStruct button1Config = {1, true, 50};
+  ButtonDeviceConfigStruct button2Config = {2, true, 50};
+  ButtonDeviceConfigStruct button3Config = {7, true, 50};
 
-  chibiESP.register_control_input_driver_module(BDriver);
+  ButtonDevice *button1 = new ButtonDevice(0);
+  ButtonDevice *button2 = new ButtonDevice(1);
+  ButtonDevice *button3 = new ButtonDevice(2);
+  button1->configure(button1Config);
+  button2->configure(button2Config);
+  button3->configure(button3Config);
 
-  chibiESP.init_kernel_drivers();
+  chibiESP.register_control_input_device(button1);
+  chibiESP.register_control_input_device(button2);
+  chibiESP.register_control_input_device(button3);
+
+  chibiESP.init_kernel_devices();
 
   user_setup_function();
 }
