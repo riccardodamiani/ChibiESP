@@ -41,7 +41,7 @@ void setup() {
   chibiESP.register_control_input_device(button3);
 
   //initialize the wheel encoder
-  WheelDevice *wheel = new WheelDevice(0);
+  WheelDevice *wheel = new WheelDevice(4);
   WheelDeviceConfigStruct wheelConfig = {4, 6, true, 50};
   wheel->configure(wheelConfig);
   chibiESP.register_control_input_device(wheel);
@@ -57,6 +57,30 @@ void setup() {
 
   //initialize all system devices
   chibiESP.init_kernel_devices();
+
+  //set the default navigation up input event
+  InputEvent upEvent;
+  upEvent.type = InputEventType::INPUT_EVENT_WHEEL;
+  upEvent.deviceID = wheel->get_device_id();
+  upEvent.eventData = 1; // 1 step 
+  upEvent.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
+  chibiESP.setNavUpEvent(upEvent);
+
+  //set the default navigation down input event
+  InputEvent downEvent;
+  downEvent.type = InputEventType::INPUT_EVENT_WHEEL;
+  downEvent.deviceID = wheel->get_device_id();
+  downEvent.eventData = -1; //1 step in the opposite direction
+  downEvent.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
+  chibiESP.setNavDownEvent(downEvent);
+
+  //set the default navigation select input event
+  InputEvent selectEvent;
+  selectEvent.type = InputEventType::INPUT_EVENT_KEY;
+  selectEvent.deviceID = 2;
+  selectEvent.eventData = 0;
+  selectEvent.deviceEventType = static_cast<uint8_t>(KeyEventType::KEY_EVENT_RELEASED);
+  chibiESP.setNavSelectEvent(selectEvent);
 
   //enter setup loop
   user_setup_function();

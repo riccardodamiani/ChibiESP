@@ -26,6 +26,7 @@ void user_setup_function(){
 void setup() {
   chibiESP.init();
 
+  //initialize the buttons
   ButtonDeviceConfigStruct button1Config = {1, true, 50};
   ButtonDeviceConfigStruct button2Config = {2, true, 50};
   ButtonDeviceConfigStruct button3Config = {7, true, 50};
@@ -41,8 +42,10 @@ void setup() {
   chibiESP.register_control_input_device(button2);
   chibiESP.register_control_input_device(button3);
 
+  //initialize the system devices
   chibiESP.init_kernel_devices();
 
+  //start the user setup function
   user_setup_function();
 }
 

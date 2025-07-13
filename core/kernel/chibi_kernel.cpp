@@ -92,31 +92,28 @@ int ChibiKernel::register_input_listener(InputListener *&listener){
   return _input_manager.createInputListener(listener); // Register a new input listener
 }
 
-InputEvent ChibiKernel::getNavUpEvent(){
-  InputEvent event;
-  event.type = InputEventType::INPUT_EVENT_WHEEL;
-  event.deviceID = 0;
-  event.eventData = 1;
-  event.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
-  return event;
+InputEvent ChibiKernel::getNavUpEvent() const{
+  return _upNavEvent; // Get the navigation up event
 }
 
-InputEvent ChibiKernel::getNavDownEvent(){
-  InputEvent event;
-  event.type = InputEventType::INPUT_EVENT_WHEEL;
-  event.deviceID = 0;
-  event.eventData = -1;
-  event.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
-  return event;
+InputEvent ChibiKernel::getNavDownEvent() const{
+  return _downNavEvent; // Get the navigation down event
 }
 
-InputEvent ChibiKernel::getNavSelectEvent(){
-  InputEvent event;
-  event.type = InputEventType::INPUT_EVENT_KEY;
-  event.deviceID = 2;
-  event.eventData = 0;
-  event.deviceEventType = static_cast<uint8_t>(KeyEventType::KEY_EVENT_RELEASED);
-  return event;
+InputEvent ChibiKernel::getNavSelectEvent() const{
+  return _selectNavEvent; // Get the navigation select event
+}
+
+void ChibiKernel::setNavUpEvent(InputEvent event){
+  _upNavEvent = event;
+}
+
+void ChibiKernel::setNavDownEvent(InputEvent event){
+  _downNavEvent = event;
+}
+
+void ChibiKernel::setNavSelectEvent(InputEvent event){
+  _selectNavEvent = event; // Set the navigation select event
 }
 
 /**

@@ -38,9 +38,12 @@ public:
   bool isProgramRunning(const std::string programName);
 
   //input navigation events
-  InputEvent getNavUpEvent();
-  InputEvent getNavDownEvent();
-  InputEvent getNavSelectEvent();
+  InputEvent getNavUpEvent() const;
+  InputEvent getNavDownEvent() const;
+  InputEvent getNavSelectEvent() const;
+  void setNavUpEvent(InputEvent event);
+  void setNavDownEvent(InputEvent event);
+  void setNavSelectEvent(InputEvent event);
 
   //devices getter
   DisplayDevice* getDisplayDevice(uint32_t deviceId);

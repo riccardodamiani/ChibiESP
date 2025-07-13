@@ -39,9 +39,12 @@ public:
   int register_input_listener(InputListener *&listener); // Register an input listener
 
   //input navigation events
-  InputEvent getNavUpEvent();
-  InputEvent getNavDownEvent();
-  InputEvent getNavSelectEvent();
+  InputEvent getNavUpEvent()const;
+  InputEvent getNavDownEvent()const;
+  InputEvent getNavSelectEvent()const;
+  void setNavUpEvent(InputEvent event);
+  void setNavDownEvent(InputEvent event);
+  void setNavSelectEvent(InputEvent event);
 
   //devices getter
   DisplayDevice* getDisplayDevice(uint32_t deviceId);
@@ -69,6 +72,11 @@ private:
   std::vector <DisplayDevice*> _displayDevices; // List of devices registered
 
   uint32_t _slow_loop_timer;
+
+  //navigation events
+  InputEvent _upNavEvent; // Navigation up event
+  InputEvent _downNavEvent; // Navigation down event
+  InputEvent _selectNavEvent; // Navigation select event
 };
 
 

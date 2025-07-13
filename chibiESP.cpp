@@ -137,7 +137,7 @@ TwoWire* ChibiESP::getI2cInterface(int bus){
  * * @brief Gets the navigation up event.
  * * @return The navigation up event.
  */
-InputEvent ChibiESP::getNavUpEvent(){
+InputEvent ChibiESP::getNavUpEvent() const{
   return _kernel->getNavUpEvent(); // Get the navigation up event from the kernel
 }
 
@@ -145,7 +145,7 @@ InputEvent ChibiESP::getNavUpEvent(){
  * * @brief Gets the navigation down event.
  * * @return The navigation down event.
  */
-InputEvent ChibiESP::getNavDownEvent(){
+InputEvent ChibiESP::getNavDownEvent() const{
   return _kernel->getNavDownEvent(); // Get the navigation down event from the kernel
 }
 
@@ -153,8 +153,32 @@ InputEvent ChibiESP::getNavDownEvent(){
  * * @brief Gets the navigation select event.
  * * @return The navigation select event.
  */
-InputEvent ChibiESP::getNavSelectEvent(){
+InputEvent ChibiESP::getNavSelectEvent() const{
   return _kernel->getNavSelectEvent(); // Get the navigation select event from the kernel
+}
+
+/**
+ * * * @brief Sets the navigation up event.
+ * * @param event The navigation up event to be set.
+ */
+void ChibiESP::setNavUpEvent(InputEvent event){
+  _kernel->setNavUpEvent(event); // Set the navigation up event in the kernel
+}
+
+/**
+ * * * @brief Sets the navigation down event.
+ * * @param event The navigation down event to be set.
+ */
+void ChibiESP::setNavDownEvent(InputEvent event){
+  _kernel->setNavDownEvent(event); // Set the navigation down event in the kernel
+}
+
+/**
+ * * * @brief Sets the navigation select event.
+ * * @param event The navigation select event to be set.
+ */
+void ChibiESP::setNavSelectEvent(InputEvent event){
+  _kernel->setNavSelectEvent(event); // Set the navigation select event in the kernel
 }
 
 /**

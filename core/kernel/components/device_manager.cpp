@@ -50,6 +50,8 @@ void DeviceManager::init_control_input_devices(void input_interrupt_callback(Inp
         init_struct.input_interrupt = input_interrupt_callback; // Set the input interrupt callback function
         if(inputDevice.device->init(init_struct) < 0){
             Logger::error("Failed to initialize control input device %d", inputDevice.device->get_device_id());
+        }else{
+            Logger::info("Control input device %d initialized", inputDevice.device->get_device_id());
         }
     }
 }
@@ -59,6 +61,8 @@ void DeviceManager::init_display_devices(){
     for (auto& displayDevice : _regDisplayDevices) {
         if(displayDevice.device->init() < 0){
             Logger::error("Failed to initialize display device %d", displayDevice.device->get_device_id());
+        }else{
+            Logger::info("Display device %d initialized", displayDevice.device->get_device_id());
         }
     }
 }
