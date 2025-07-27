@@ -66,8 +66,8 @@ void ChibiESP::init_kernel_devices(){
  * * @return 0 on success, or an error code if the device could not be registered.
  * * @details This function registers a control input device with the kernel. The device must implement the HIDDevice interface.
  */
-int ChibiESP::register_control_input_device(HIDDevice* device){
-  return _kernel->register_control_input_device(device); // Register the device with the device manager
+int ChibiESP::register_hid_device(HIDDevice* device){
+  return _kernel->register_hid_device(device); // Register the device with the device manager
 }
 
 /**

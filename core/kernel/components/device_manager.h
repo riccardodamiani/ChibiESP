@@ -14,7 +14,7 @@ class HIDDevice;
 class DisplayDevice;
 class DisplayHandle;
 
-struct ControlInputControlStruct_t{
+struct HIDControlStruct_t{
     HIDDevice* device;
 };
 
@@ -24,14 +24,14 @@ struct DisplayControlStruct_t{
 
 class DeviceManager {
 public:
-    int register_control_input_device(HIDDevice* device);
+    int register_hid_device(HIDDevice* device);
     int register_display_device(DisplayDevice* device);
 
-    void init_control_input_devices(void input_interrupt_callback(InputEvent &event));
+    void init_hid_devices(void input_interrupt_callback(InputEvent &event));
     void init_display_devices();
 
     //control input device functions
-    int update_control_input_devices_state();
+    int update_hid_devices_state();
 
     //display device functions
     DisplayDevice*  get_display_device_by_id(uint32_t deviceId);
@@ -41,7 +41,7 @@ private:
     std::mutex _controlInputDeviceMutex;
 
     //registered devices
-    std::vector <ControlInputControlStruct_t> _regHIDDevices; // List of input devices registered
+    std::vector <HIDControlStruct_t> _regHIDDevices; // List of input devices registered
     std::vector <DisplayControlStruct_t> _regDisplayDevices; // List of devices registered
 };
 

@@ -39,9 +39,9 @@ void setup() {
   button2->configure(button2Config);
   button3->configure(button3Config);
 
-  chibiESP.register_control_input_device(button1);
-  chibiESP.register_control_input_device(button2);
-  chibiESP.register_control_input_device(button3);
+  chibiESP.register_hid_device(button1);
+  chibiESP.register_hid_device(button2);
+  chibiESP.register_hid_device(button3);
 
   //initialize the system devices
   chibiESP.init_kernel_devices();

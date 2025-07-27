@@ -39,7 +39,7 @@ int ChibiKernel::init(){
 
 void ChibiKernel::init_kernel_devices(){
 
-  _deviceManager->init_control_input_devices(ChibiKernel::input_interrupt_callback); // Initialize control input devices
+  _deviceManager->init_hid_devices(ChibiKernel::input_interrupt_callback); // Initialize control input devices
   _deviceManager->init_display_devices(); // Initialize display devices
 }
 
@@ -51,8 +51,8 @@ void ChibiKernel::input_interrupt_callback(InputEvent &event){
   }
 }
 
-int ChibiKernel::register_control_input_device(HIDDevice* device){
-  return _deviceManager->register_control_input_device(device); // Register the device with the device manager
+int ChibiKernel::register_hid_device(HIDDevice* device){
+  return _deviceManager->register_hid_device(device); // Register the device with the device manager
 }
 
 int ChibiKernel::register_display_device(DisplayDevice* device){
@@ -64,7 +64,7 @@ DisplayDevice* ChibiKernel::getDisplayDevice(uint32_t deviceId){
 }
 
 void ChibiKernel::update_device_state(){
-  _deviceManager->update_control_input_devices_state(); // Update the state of control input devices
+  _deviceManager->update_hid_devices_state(); // Update the state of control input devices
 }
 
 void ChibiKernel::loop(){

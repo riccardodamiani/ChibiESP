@@ -10,7 +10,7 @@
 
 #include <mutex>
 
-int DeviceManager::register_control_input_device(HIDDevice* device){
+int DeviceManager::register_hid_device(HIDDevice* device){
     std::lock_guard<std::mutex> lock(_controlInputDeviceMutex); // Lock the mutex for thread safety
     for (const auto& existing_device : _regHIDDevices) {
         if (existing_device.device->getDeviceId() == device->getDeviceId()) {
@@ -20,7 +20,7 @@ int DeviceManager::register_control_input_device(HIDDevice* device){
     }
 
     // Register the new device
-    ControlInputControlStruct_t device_struct;
+    HIDControlStruct_t device_struct;
     device_struct.device = device;
     _regHIDDevices.push_back(device_struct);
     Logger::info("Input device %d registered", device->getDeviceId());
@@ -44,7 +44,7 @@ int DeviceManager::register_display_device(DisplayDevice* device){
     return 0; // Success
 }
 
-void DeviceManager::init_control_input_devices(void input_interrupt_callback(InputEvent &)){
+void DeviceManager::init_hid_devices(void input_interrupt_callback(InputEvent &)){
     // Initialize control input devices
     HIDDeviceInitStruct_t *init_struct = new HIDDeviceInitStruct_t();
     init_struct->input_interrupt = input_interrupt_callback; // Set the input interrupt callback function
@@ -69,7 +69,7 @@ void DeviceManager::init_display_devices(){
     }
 }
 
-int DeviceManager::update_control_input_devices_state(){
+int DeviceManager::update_hid_devices_state(){
     std::lock_guard<std::mutex> lock(_controlInputDeviceMutex); // Lock the mutex for thread safety
     for (auto& inputDevice : _regHIDDevices) {
         if(inputDevice.device->update() < 0){

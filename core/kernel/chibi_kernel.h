@@ -24,7 +24,7 @@ public:
   void loop();
   void init_kernel_devices();
   InputManager& get_input_manager() { return _input_manager; } // Getter for input manager instance
-  int register_control_input_device(HIDDevice* device);
+  int register_hid_device(HIDDevice* device);
   int register_display_device(DisplayDevice* device);
 
   //program functions

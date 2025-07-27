@@ -26,7 +26,7 @@ public:
   int init();
   void init_kernel_devices();
   void loop();
-  int register_control_input_device(HIDDevice* device);
+  int register_hid_device(HIDDevice* device);
   int register_display_device(DisplayDevice* device);
 
   //program functions

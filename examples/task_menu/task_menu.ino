@@ -37,15 +37,15 @@ void setup() {
   button2->configure(button2Config);
   button3->configure(button3Config);
 
-  chibiESP.register_control_input_device(button1);
-  chibiESP.register_control_input_device(button2);
-  chibiESP.register_control_input_device(button3);
+  chibiESP.register_hid_device(button1);
+  chibiESP.register_hid_device(button2);
+  chibiESP.register_hid_device(button3);
 
   //initialize the wheel encoder
   WheelDevice *wheel = new WheelDevice(3);
   WheelDeviceConfigStruct wheelConfig = {4, 6, true, 50};
   wheel->configure(wheelConfig);
-  chibiESP.register_control_input_device(wheel);
+  chibiESP.register_hid_device(wheel);
 
   //initialize the I2C interface for the display
   chibiESP.registerI2cInterface(0, 9, 8);
