@@ -25,7 +25,8 @@ int SSD1306::configure(SSD1306ConfigStruct config){
     return 0;
 }
 
-int SSD1306::init(){
+int SSD1306::init(DeviceInitStruct_t *init_struct){
+    
     //This device needs a i2c interface handled by the kernel
     //NEVER close the TwoWire interface since it's managed by the system
     TwoWire* i2cInterface = chibiESP.getI2cInterface(_i2c_bus);
@@ -42,7 +43,7 @@ int SSD1306::init(){
     return 0;
 }
 
-int SSD1306::deinit(void* arg){
+int SSD1306::deinit(){
     if(_displayObj == nullptr) return 0;
     
     delete _displayObj;

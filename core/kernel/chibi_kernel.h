@@ -14,7 +14,7 @@ class InputListener;
 class DisplayDevice;
 class InterfaceManager;
 class TwoWire;
-class ControlInputDevice;
+class HIDDevice;
 
 class ChibiKernel{
 public:
@@ -24,7 +24,7 @@ public:
   void loop();
   void init_kernel_devices();
   InputManager& get_input_manager() { return _input_manager; } // Getter for input manager instance
-  int register_control_input_device(ControlInputDevice* device);
+  int register_control_input_device(HIDDevice* device);
   int register_display_device(DisplayDevice* device);
 
   //program functions
@@ -68,7 +68,7 @@ private:
   DeviceManager* _deviceManager; // Device manager instance
   CESP_ProgramManager _program_manager; // Program manager instance
   CESP_TaskManager _task_manager; // Task manager instance
-  std::vector <ControlInputDevice*> _controlInputDevices; // List of input devices registered
+  std::vector <HIDDevice*> _controlInputDevices; // List of input devices registered
   std::vector <DisplayDevice*> _displayDevices; // List of devices registered
 
   uint32_t _slow_loop_timer;

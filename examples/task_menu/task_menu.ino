@@ -3,6 +3,7 @@
 // See LICENSE file in the project root for full license information.
 
 #include <chibiESP.h>
+#include <core/kernel/device/device.h>
 #include <core/base_devices/button.h>
 #include <core/base_devices/wheel.h>
 #include <core/base_devices/ssd1306.h>
@@ -41,7 +42,7 @@ void setup() {
   chibiESP.register_control_input_device(button3);
 
   //initialize the wheel encoder
-  WheelDevice *wheel = new WheelDevice(4);
+  WheelDevice *wheel = new WheelDevice(3);
   WheelDeviceConfigStruct wheelConfig = {4, 6, true, 50};
   wheel->configure(wheelConfig);
   chibiESP.register_control_input_device(wheel);
@@ -50,7 +51,7 @@ void setup() {
   chibiESP.registerI2cInterface(0, 9, 8);
 
   //initialize the display device
-  SSD1306 *display = new SSD1306(0);
+  SSD1306 *display = new SSD1306(4);
   SSD1306ConfigStruct displayConfig = {128, 64, 0};
   display->configure(displayConfig);
   chibiESP.register_display_device(display);
@@ -61,7 +62,7 @@ void setup() {
   //set the default navigation up input event
   InputEvent upEvent;
   upEvent.type = InputEventType::INPUT_EVENT_WHEEL;
-  upEvent.deviceID = wheel->get_device_id();
+  upEvent.deviceID = wheel->getDeviceId();
   upEvent.eventData = 1; // 1 step 
   upEvent.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
   chibiESP.setNavUpEvent(upEvent);
@@ -69,7 +70,7 @@ void setup() {
   //set the default navigation down input event
   InputEvent downEvent;
   downEvent.type = InputEventType::INPUT_EVENT_WHEEL;
-  downEvent.deviceID = wheel->get_device_id();
+  downEvent.deviceID = wheel->getDeviceId();
   downEvent.eventData = -1; //1 step in the opposite direction
   downEvent.deviceEventType = static_cast<uint8_t>(WheelEventType::WHEEL_EVENT_MOVED);
   chibiESP.setNavDownEvent(downEvent);

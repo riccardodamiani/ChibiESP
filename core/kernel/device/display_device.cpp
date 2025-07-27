@@ -9,11 +9,14 @@
  */
 
 #include "core/kernel/device/display_device.h"
+#include "core/kernel/device/device.h"
+#include "core/kernel/device/device_types.h"
 
 DisplayDevice::DisplayDevice(uint32_t deviceId) : 
-    _deviceId(deviceId)
+    Device(deviceId, DeviceType::DEVICE_TYPE_DISPLAY)
 {
-
+    setDeviceName("Display Device");
+    setDeviceDescription("Generic Display Device");
 }
 
 /**
@@ -27,23 +30,6 @@ int DisplayDevice::get_device_info(DisplayDeviceInfo_t &info){
  * @brief TODO: Function to get the size in pixels the text will have on screen
  */
 int DisplayDevice::getTextSize(std::string text, int16_t x, int16_t y, int16_t size, int16_t *real_x, int16_t *real_y, uint16_t* width, uint16_t* height){
-    return 0;
-}
-
-
-/**
- * @brief device initialization function
- * @details This is called by the kernel when the device is loaded (and starts running). This should contain hardware inizialization stuff
- */
-int DisplayDevice::init(){
-    return 0;
-}
-
-/**
- * @brief device de-initialization function
- * @details This is called by the kernel when the device is unloaded (stops running). This should contain hardware de-initialization stuff, memory cleaning, ecc..
- */
-int DisplayDevice::deinit(void* arg){
     return 0;
 }
 

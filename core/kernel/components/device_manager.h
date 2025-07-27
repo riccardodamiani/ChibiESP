@@ -10,11 +10,12 @@
 
 #include "core/structs/input_structs.h"
 
-class ControlInputDevice;
+class HIDDevice;
 class DisplayDevice;
+class DisplayHandle;
 
 struct ControlInputControlStruct_t{
-    ControlInputDevice* device;
+    HIDDevice* device;
 };
 
 struct DisplayControlStruct_t{
@@ -23,7 +24,7 @@ struct DisplayControlStruct_t{
 
 class DeviceManager {
 public:
-    int register_control_input_device(ControlInputDevice* device);
+    int register_control_input_device(HIDDevice* device);
     int register_display_device(DisplayDevice* device);
 
     void init_control_input_devices(void input_interrupt_callback(InputEvent &event));
@@ -40,7 +41,7 @@ private:
     std::mutex _controlInputDeviceMutex;
 
     //registered devices
-    std::vector <ControlInputControlStruct_t> _regControlInputDevices; // List of input devices registered
+    std::vector <ControlInputControlStruct_t> _regHIDDevices; // List of input devices registered
     std::vector <DisplayControlStruct_t> _regDisplayDevices; // List of devices registered
 };
 

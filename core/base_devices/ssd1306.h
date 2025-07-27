@@ -6,6 +6,7 @@
 #define SSD1306_DISPLAY_H
 
 #include "core/kernel/device/display_device.h"
+#include "core/kernel/device/device.h"
 
 class Adafruit_SSD1306;
 
@@ -19,8 +20,8 @@ class SSD1306 : public DisplayDevice{
 public:
     SSD1306(uint32_t deviceId);
     int configure(SSD1306ConfigStruct config);
-    int init() override;
-    int deinit(void* arg) override;
+    int init(DeviceInitStruct_t *init_struct) override;
+    int deinit() override;
     int get_device_info(DisplayDeviceInfo_t &info) override;
     int clearScreen() override;
     int updateScreen() override;

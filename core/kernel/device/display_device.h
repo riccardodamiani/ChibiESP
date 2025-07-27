@@ -8,6 +8,8 @@
 #include <string>
 #include <stdint.h>
 
+#include "core/kernel/device/device.h"
+
 class ChibiESP;
 
 enum BW_Color{
@@ -34,12 +36,10 @@ struct DisplayDeviceInfo_t{
     uint32_t controllerId;
 };
 
-class DisplayDevice{
+class DisplayDevice : public Device{
 public:
     DisplayDevice(uint32_t deviceId);
     DisplayDevice() = delete;
-    virtual int init();
-    virtual int deinit(void* arg);
     virtual int updateScreen();
     virtual int clearScreen();
 
@@ -62,9 +62,6 @@ public:
     //info functions
     virtual int getTextSize(std::string text, int16_t x, int16_t y, int16_t size, int16_t *real_x, int16_t *real_y, uint16_t* width, uint16_t* height);
     virtual int get_device_info(DisplayDeviceInfo_t &info);
-    uint32_t get_device_id() const { return _deviceId; }
-private:
-    uint32_t _deviceId; // Device ID
 };
 
 #endif  //DISPLAY_DEVICE_H

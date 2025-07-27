@@ -3,6 +3,7 @@
 // See LICENSE file in the project root for full license information.
 
 #include <chibiESP.h>
+#include <core/kernel/device/device.h>
 #include <core/base_devices/button.h>
 #include <core/logging/logging.h>
 #include <core/structs/program.h>

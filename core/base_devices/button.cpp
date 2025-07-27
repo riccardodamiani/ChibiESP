@@ -5,14 +5,17 @@
 #include "core/base_devices/button.h"
 #include "core/logging/logging.h"
 #include "core/structs/input_structs.h"
-#include "core/kernel/device/control_input_device.h"
+#include "core/kernel/device/hid_device.h"
+#include "core/kernel/device/device.h"
 
 #include <stdint.h>
 #include <memory>
 
 ButtonDevice::ButtonDevice(uint32_t deviceId):
-    ControlInputDevice(deviceId)
+    HIDDevice(deviceId)
 {
+    setDeviceName("Button Device");
+    setDeviceDescription("Generic button device");
     _device = nullptr;
     _input_interrupt = nullptr;
 }
@@ -32,9 +35,16 @@ int ButtonDevice::configure(ButtonDeviceConfigStruct config){
 
 
 //initialize the gpio for each button
-int ButtonDevice::init(ControlDeviceInitStruct_t& init_struct){
+int ButtonDevice::init(DeviceInitStruct_t* init_struct){
 
-    _input_interrupt = init_struct.input_interrupt;
+    if(init_struct->getDeviceType() != DeviceType::DEVICE_TYPE_HID) {
+        Logger::error("Button Device: Init error: init_struct is not of type HIDDeviceInitStruct_t");
+        return -1; // Invalid init structure
+    }
+
+    HIDDeviceInitStruct_t* hid_init_struct = static_cast<HIDDeviceInitStruct_t*>(init_struct);
+
+    _input_interrupt = hid_init_struct->input_interrupt;
     if (_input_interrupt == nullptr) {
         if(_device != nullptr){
             delete _device;
@@ -63,7 +73,7 @@ void ButtonDevice::update_device_state(){
             _device->last_change_time_ms = current_time;
             _device->last_state = new_state;
             struct InputEvent event;
-            event.deviceID = get_device_id();
+            event.deviceID = getDeviceId();
             event.type = InputEventType::INPUT_EVENT_KEY; //button events are of type KEY
             event.eventData = 0;
             if(new_state) {

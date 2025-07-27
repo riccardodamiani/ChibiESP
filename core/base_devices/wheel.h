@@ -10,7 +10,7 @@
 #include <atomic>
 #include <memory>
 
-#include "core/kernel/device/control_input_device.h"
+#include "core/kernel/device/hid_device.h"
 #include "core/structs/input_structs.h"
 
 const uint8_t MAX_WHEEL_DEVICES = 5; // Maximum number of wheel devices
@@ -21,11 +21,12 @@ struct WheelDeviceConfigStruct{
   uint32_t debounce_time_ms; // Debounce time in milliseconds
 };
 
-class WheelDevice : public ControlInputDevice {
+class WheelDevice : public HIDDevice {
 public:
   WheelDevice(uint32_t deviceId);
+  WheelDevice() = delete;
   int configure(WheelDeviceConfigStruct config);
-  int init(ControlDeviceInitStruct_t& init_struct) override;
+  int init(DeviceInitStruct_t* init_struct) override;
   int deinit() override;
   int update() override;
   int get_device_info(void* arg) override;

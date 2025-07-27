@@ -17,7 +17,7 @@ class DisplayDevice;
 class InterfaceManager;
 class TwoWire;
 class ChibiKernel;
-class ControlInputDevice;
+class HIDDevice;
 
 class ChibiESP{
 public:
@@ -26,7 +26,7 @@ public:
   int init();
   void init_kernel_devices();
   void loop();
-  int register_control_input_device(ControlInputDevice* device);
+  int register_control_input_device(HIDDevice* device);
   int register_display_device(DisplayDevice* device);
 
   //program functions

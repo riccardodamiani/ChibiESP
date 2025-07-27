@@ -51,7 +51,7 @@ void ChibiKernel::input_interrupt_callback(InputEvent &event){
   }
 }
 
-int ChibiKernel::register_control_input_device(ControlInputDevice* device){
+int ChibiKernel::register_control_input_device(HIDDevice* device){
   return _deviceManager->register_control_input_device(device); // Register the device with the device manager
 }
 

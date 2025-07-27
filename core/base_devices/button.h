@@ -10,7 +10,7 @@
 #include <atomic>
 #include <memory>
 
-#include "core/kernel/device/control_input_device.h"
+#include "core/kernel/device/hid_device.h"
 
 struct ButtonDeviceConfigStruct{
     uint8_t gpio_pin; // GPIO pin for button
@@ -18,15 +18,14 @@ struct ButtonDeviceConfigStruct{
     uint32_t debounce_time_ms; // Debounce time in milliseconds
 };
 
-class ButtonDevice : public ControlInputDevice{
+class ButtonDevice : public HIDDevice{
 public:
     ButtonDevice(uint32_t deviceId);
     int configure(ButtonDeviceConfigStruct config);
-    int init(ControlDeviceInitStruct_t& init_struct) override;
+    int init(DeviceInitStruct_t* init_struct) override;
     int deinit() override;
     int update() override;
     int get_device_info(void* arg) override;
-
 private:
 struct InternalDeviceInfo{
     uint8_t gpio_pin;

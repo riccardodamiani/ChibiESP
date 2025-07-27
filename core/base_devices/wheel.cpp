@@ -5,7 +5,8 @@
 #include "core/base_devices/wheel.h"
 #include "core/logging/logging.h"
 #include "core/structs/input_structs.h"
-#include "core/kernel/device/control_input_device.h"
+#include "core/kernel/device/hid_device.h"
+#include "core/kernel/device/device.h"
 
 #include <EncoderStepCounter.h>
 #include <memory>
@@ -13,8 +14,10 @@
 std::vector<WheelDevice*> WheelDevice::_instances; // Static vector to hold all instances of WheelDevice
 
 WheelDevice::WheelDevice(uint32_t deviceId) : 
-    ControlInputDevice(deviceId)
+   HIDDevice(deviceId)
 {
+    setDeviceName("Encoder Wheel Device");
+    setDeviceDescription("Generic Encoder Wheel Device");
     _device = nullptr;
     _input_interrupt = nullptr;
 }
@@ -49,7 +52,15 @@ void WheelDevice::device_update_isr(){
 }
 
 //initialize the encoders and attach interrupts
-int WheelDevice::init(ControlDeviceInitStruct_t& init_struct){
+int WheelDevice::init(DeviceInitStruct_t* init_struct){
+
+    if(init_struct->getDeviceType() != DeviceType::DEVICE_TYPE_HID) {
+        Logger::error("Wheel Device: Init error: init_struct is not of type HIDDeviceInitStruct_t");
+        return -1; // Invalid init structure
+    }
+
+    HIDDeviceInitStruct_t * hid_init_struct = static_cast<HIDDeviceInitStruct_t*>(init_struct);
+
     if(_device == nullptr) {
         Logger::error("Wheel Device: Init error: no device available");
         return -1; // Nothing to initialize
@@ -60,7 +71,7 @@ int WheelDevice::init(ControlDeviceInitStruct_t& init_struct){
         return -1; // Maximum number of devices reached
     }
 
-    _input_interrupt = init_struct.input_interrupt; // Set the callback function for input manager
+    _input_interrupt = hid_init_struct->input_interrupt; // Set the callback function for input manager
     if (_input_interrupt == nullptr) {
         Logger::error("Wheel _device: Init error: no callback function provided for input manager");
         _instances.pop_back(); // Remove this instance from the static vector
@@ -117,7 +128,7 @@ void WheelDevice::update_device_state(){
 
             //call the interrupt callback function
             struct InputEvent event;
-            event.deviceID = get_device_id();
+            event.deviceID = getDeviceId();
             event.type = InputEventType::INPUT_EVENT_WHEEL;
             event.deviceEventType = 0; // TODO: define the event type for wheel events
             event.eventData = delta; // Store the delta in the event data

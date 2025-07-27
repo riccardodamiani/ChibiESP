@@ -6,23 +6,23 @@
 #define CONTROL_INPUT_DEVICE_H
 
 #include "core/structs/input_structs.h"
+#include "core/kernel/device/device.h"
 #include <string>
 
-struct ControlDeviceInitStruct_t{
+class HIDDeviceInitStruct_t : public DeviceInitStruct_t {
+public:
+    HIDDeviceInitStruct_t() {
+        _deviceType = DeviceType::DEVICE_TYPE_HID; // Set the device type to
+    }
     void (*input_interrupt)(InputEvent&);
 };
 
-class ControlInputDevice {
+class HIDDevice : public Device {
 public:
-    ControlInputDevice(uint32_t deviceId);
-    ControlInputDevice() = delete;
-    virtual int init(ControlDeviceInitStruct_t& init_struct);
-    virtual int deinit();
+    HIDDevice(uint32_t deviceId);
+    HIDDevice() = delete;
     virtual int update();
     virtual int get_device_info(void* arg);
-    uint32_t get_device_id() const { return _deviceId; }
-private:
-    uint32_t _deviceId; // Device ID
 };
 
 #endif // CONTROL_INPUT_DEVICE_H

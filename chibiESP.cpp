@@ -13,7 +13,8 @@
 #include "core/logging/logging.cpp"
 #include "core/kernel/components/input_manager.cpp"
 #include "core/kernel/components/input_listener.cpp"
-#include "core/kernel/device/control_input_device.cpp"
+#include "core/kernel/device/device.cpp"
+#include "core/kernel/device/hid_device.cpp"
 #include "core/kernel/device/display_device.cpp"
 #include "core/kernel/components/task_manager.cpp"
 #include "core/kernel/components/program_manager.cpp"
@@ -63,9 +64,9 @@ void ChibiESP::init_kernel_devices(){
  * * @brief Registers a control input device.
  * * @param device The control input device to be registered.
  * * @return 0 on success, or an error code if the device could not be registered.
- * * @details This function registers a control input device with the kernel. The device must implement the ControlInputDevice interface.
+ * * @details This function registers a control input device with the kernel. The device must implement the HIDDevice interface.
  */
-int ChibiESP::register_control_input_device(ControlInputDevice* device){
+int ChibiESP::register_control_input_device(HIDDevice* device){
   return _kernel->register_control_input_device(device); // Register the device with the device manager
 }
 
