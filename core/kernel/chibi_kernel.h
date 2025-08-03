@@ -9,12 +9,14 @@
 #include "core/kernel/components/program_manager.h"
 #include "core/kernel/components/task_manager.h"
 #include "core/kernel/components/device_manager.h"
+#include "core/kernel/device/device_types.h"
 
 class InputListener;
 class DisplayDevice;
 class InterfaceManager;
 class TwoWire;
 class HIDDevice;
+class Device;
 
 class ChibiKernel{
 public:
@@ -24,8 +26,7 @@ public:
   void loop();
   void init_kernel_devices();
   InputManager& get_input_manager() { return _input_manager; } // Getter for input manager instance
-  int register_hid_device(HIDDevice* device);
-  int register_display_device(DisplayDevice* device);
+  int register_device(Device* device);
 
   //program functions
   int createProgram(CESP_Program program);
@@ -47,7 +48,7 @@ public:
   void setNavSelectEvent(InputEvent event);
 
   //devices getter
-  DisplayDevice* getDisplayDevice(uint32_t deviceId);
+  DisplayDevice* getDisplayDevice(DisplayId displayId);
 
   //interfaces
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);

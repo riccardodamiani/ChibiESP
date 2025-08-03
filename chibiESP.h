@@ -8,6 +8,7 @@
 #include "core/kernel/components/input_manager.h"
 #include "core/structs/program.h"
 #include "core/structs/input_structs.h"
+#include "core/kernel/device/device_types.h"
 
 #include <string>
 #include <stdint.h>
@@ -18,6 +19,7 @@ class InterfaceManager;
 class TwoWire;
 class ChibiKernel;
 class HIDDevice;
+class Device;
 
 class ChibiESP{
 public:
@@ -26,8 +28,7 @@ public:
   int init();
   void init_kernel_devices();
   void loop();
-  int register_hid_device(HIDDevice* device);
-  int register_display_device(DisplayDevice* device);
+  int register_device(Device* device);
 
   //program functions
   int createProgram(CESP_Program program);
@@ -46,7 +47,7 @@ public:
   void setNavSelectEvent(InputEvent event);
 
   //devices getter
-  DisplayDevice* getDisplayDevice(uint32_t deviceId);
+  DisplayDevice* getDisplayDevice(DisplayId displayId);
 
   //interfaces
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);

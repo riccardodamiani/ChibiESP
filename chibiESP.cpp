@@ -7,6 +7,7 @@
 #include "core/kernel/components/input_manager.h"
 #include "core/structs/program.h"
 #include "core/structs/input_structs.h"
+#include "core/kernel/device/device_types.h"
 
 //include cpp files that needs to be compiled
 #include "core/kernel/chibi_kernel.cpp"
@@ -19,6 +20,8 @@
 #include "core/kernel/components/task_manager.cpp"
 #include "core/kernel/components/program_manager.cpp"
 #include "core/kernel/components/device_manager.cpp"
+#include "core/kernel/components/display_device_manager.cpp"
+#include "core/kernel/components/hid_device_manager.cpp"
 #include "core/kernel/components/interface_manager.cpp"
 #include "core/task/task.cpp"
 #include "core/task/task_interface.cpp"
@@ -61,23 +64,13 @@ void ChibiESP::init_kernel_devices(){
 }
 
 /**
- * * @brief Registers a control input device.
- * * @param device The control input device to be registered.
+ * * @brief Registers a device.
+ * * @param device The device to be registered.
  * * @return 0 on success, or an error code if the device could not be registered.
- * * @details This function registers a control input device with the kernel. The device must implement the HIDDevice interface.
+ * * @details This function registers a device with the kernel. The device must implement the appropriate interface.
  */
-int ChibiESP::register_hid_device(HIDDevice* device){
-  return _kernel->register_hid_device(device); // Register the device with the device manager
-}
-
-/**
- * * @brief Registers a display device
- * * @param device The display device to be registered.
- * * @return 0 on success, or an error code if the device could not be registered.
- * * @details This function registers a display device with the kernel. The device must implement the DisplayDevice interface.
- */
-int ChibiESP::register_display_device(DisplayDevice* device){
-  return _kernel->register_display_device(device); // Register the device with the device manager
+int ChibiESP::register_device(Device* device){
+  return _kernel->register_device(device); // Register the device with the device manager
 }
 
 /**
@@ -85,8 +78,8 @@ int ChibiESP::register_display_device(DisplayDevice* device){
  * * @param deviceId the id of the display device to be retrieved.
  * * @return A pointer to the display device, or nullptr if not found.
  */
-DisplayDevice* ChibiESP::getDisplayDevice(uint32_t deviceId){
-  return _kernel->getDisplayDevice(deviceId); // Get the display device by id
+DisplayDevice* ChibiESP::getDisplayDevice(DisplayId displayId){
+  return _kernel->getDisplayDevice(displayId); // Get the display device by id
 }
 
 /**

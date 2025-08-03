@@ -39,8 +39,7 @@ int ChibiKernel::init(){
 
 void ChibiKernel::init_kernel_devices(){
 
-  _deviceManager->init_hid_devices(ChibiKernel::input_interrupt_callback); // Initialize control input devices
-  _deviceManager->init_display_devices(); // Initialize display devices
+  _deviceManager->init_devices(ChibiKernel::input_interrupt_callback); // Initialize control input devices
 }
 
 // Static wrapper function for wheel inputs
@@ -51,20 +50,16 @@ void ChibiKernel::input_interrupt_callback(InputEvent &event){
   }
 }
 
-int ChibiKernel::register_hid_device(HIDDevice* device){
-  return _deviceManager->register_hid_device(device); // Register the device with the device manager
+int ChibiKernel::register_device(Device* device){
+  return _deviceManager->register_device(device); // Register the device with the device manager
 }
 
-int ChibiKernel::register_display_device(DisplayDevice* device){
-  return _deviceManager->register_display_device(device); // Register the device with the device manager
-}
-
-DisplayDevice* ChibiKernel::getDisplayDevice(uint32_t deviceId){
-  return _deviceManager->get_display_device_by_id(deviceId); // Get the display device by id
+DisplayDevice* ChibiKernel::getDisplayDevice(DisplayId deviceId){
+  return _deviceManager->getDisplayDeviceById(deviceId); // Get the display device by id
 }
 
 void ChibiKernel::update_device_state(){
-  _deviceManager->update_hid_devices_state(); // Update the state of control input devices
+  _deviceManager->updateHidDevicesState(); // Update the state of control input devices
 }
 
 void ChibiKernel::loop(){

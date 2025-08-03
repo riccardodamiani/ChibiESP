@@ -6,11 +6,12 @@
 #include "core/task/gui/view_render.h"
 #include "core/logging/logging.h"
 
+#include "core/kernel/device/device_types.h"
 #include "core/kernel/device/display_device.h"
 #include "chibiESP.h"
 
 TaskViewRenderer::TaskViewRenderer(){
-    _displayDevice = chibiESP.getDisplayDevice(0);
+    _displayDevice = chibiESP.getDisplayDevice(DisplayId(0));
     if(!_displayDevice){
         Logger::error("View renderer: No available display device");
         _screenWidth = 0;

@@ -10,81 +10,84 @@
 
 #include <mutex>
 
-int DeviceManager::register_hid_device(HIDDevice* device){
-    std::lock_guard<std::mutex> lock(_controlInputDeviceMutex); // Lock the mutex for thread safety
-    for (const auto& existing_device : _regHIDDevices) {
-        if (existing_device.device->getDeviceId() == device->getDeviceId()) {
-            Logger::error("Input device %d is already registered", device->getDeviceId());
-            return -1; // Device already registered
-        }
+int DeviceManager::register_device(Device* device){
+    if(device == nullptr) {
+        return -1; // Error: null device
     }
 
-    // Register the new device
-    HIDControlStruct_t device_struct;
-    device_struct.device = device;
-    _regHIDDevices.push_back(device_struct);
-    Logger::info("Input device %d registered", device->getDeviceId());
+    if(getDeviceById(device->getDeviceId()) != nullptr) {
+        Logger::error("Device %d is already registered", device->getDeviceId());
+        return -1; // Error: device already registered
+    }
+
+    std::lock_guard<std::mutex> lock(_deviceMutex); // Lock the mutex for thread safety
+    _devices.push_back(device); // Add the device to the list of registered devices
+    Logger::info("Device %d registered. (name=%s, type=%d)", device->getDeviceId(), device->getDeviceName().c_str(), device->getDeviceType());
     return 0; // Success
 }
 
-int DeviceManager::register_display_device(DisplayDevice* device){
-    std::lock_guard<std::mutex> lock(_displayDeviceMutex); // Lock the mutex for thread safety
-    for (const auto& existing_device : _regDisplayDevices) {
-        if (existing_device.device->getDeviceId() == device->getDeviceId()) {
-            Logger::error("Display device %d is already registered", device->getDeviceId());
-            return -1; // Device already registered
+void DeviceManager::init_devices(void input_interrupt_callback(InputEvent &)){
+    // Initialize all registered devices
+    std::lock_guard<std::mutex> lock(_deviceMutex); // Lock the mutex for thread safety
+    for (auto& device : _devices) {
+        int result = -1;
+        switch(device->getDeviceType()) {
+            case DeviceType::DEVICE_TYPE_HID:
+                result = initHidDevice(static_cast<HIDDevice*>(device), input_interrupt_callback);
+                break;
+            case DeviceType::DEVICE_TYPE_DISPLAY:
+                result = initDisplayDevice(static_cast<DisplayDevice*>(device));
+                break;
+            default:
+                Logger::warning("Unknown device type for device %d", device->getDeviceId());
+        }
+
+        if (result < 0) {
+            Logger::error("Failed to initialize device %d (%s)", device->getDeviceId(), device->getDeviceName().c_str());
+        } else {
+            Logger::info("Device %d initialized (%s)", device->getDeviceId(), device->getDeviceName().c_str());
         }
     }
-
-    // Register the new device
-    DisplayControlStruct_t device_struct;
-    device_struct.device = device;
-    _regDisplayDevices.push_back(device_struct);
-    Logger::info("Display device %d registered", device->getDeviceId());
-    return 0; // Success
 }
 
-void DeviceManager::init_hid_devices(void input_interrupt_callback(InputEvent &)){
-    // Initialize control input devices
+int DeviceManager::initHidDevice(HIDDevice* device, void input_interrupt_callback(InputEvent &)){
     HIDDeviceInitStruct_t *init_struct = new HIDDeviceInitStruct_t();
     init_struct->input_interrupt = input_interrupt_callback; // Set the input interrupt callback function
-    for (auto& inputDevice : _regHIDDevices) {
-        if(inputDevice.device->init(init_struct) < 0){
-            Logger::error("Failed to initialize control input device %d", inputDevice.device->getDeviceId());
-        }else{
-            Logger::info("Control input device %d initialized", inputDevice.device->getDeviceId());
-        }
+
+    if (device->init(init_struct) < 0) {
+        Logger::error("Failed to initialize HID device %d (%s)", device->getDeviceId(), device->getDeviceName().c_str());
+        return -1;
     }
+
+    _hidDeviceManager.registerDevice(device);
     delete init_struct;
+    return 0;
 }
 
-void DeviceManager::init_display_devices(){
-    // Initialize display devices
-    for (auto& displayDevice : _regDisplayDevices) {
-        if(displayDevice.device->init() < 0){
-            Logger::error("Failed to initialize display device %d", displayDevice.device->getDeviceId());
-        }else{
-            Logger::info("Display device %d initialized", displayDevice.device->getDeviceId());
-        }
+int DeviceManager::initDisplayDevice(DisplayDevice* device){
+    if (device->init() < 0) {
+        Logger::error("Failed to initialize display device %d (%s)", device->getDeviceId(), device->getDeviceName().c_str());
+        return -1;
     }
-}
 
-int DeviceManager::update_hid_devices_state(){
-    std::lock_guard<std::mutex> lock(_controlInputDeviceMutex); // Lock the mutex for thread safety
-    for (auto& inputDevice : _regHIDDevices) {
-        if(inputDevice.device->update() < 0){
-            //Logger::error("Failed to update control input device %s", inputDevice.device->get_name().c_str());
-        }
-    }
+    _displayDeviceManager.registerDevice(device);
     return 0; // Success
 }
 
-DisplayDevice* DeviceManager::get_display_device_by_id(uint32_t deviceId){
-    std::lock_guard<std::mutex> lock(_displayDeviceMutex); // Lock the mutex for thread safety
-    for (auto& displayDevice : _regDisplayDevices) {
-        if(displayDevice.device->getDeviceId() == deviceId){
-            return displayDevice.device; // Return the device if found
+Device* DeviceManager::getDeviceById(uint32_t deviceId){
+    std::lock_guard<std::mutex> lock(_deviceMutex); // Lock the mutex for thread safety
+    for (const auto& device : _devices) {
+        if (device->getDeviceId() == deviceId) {
+            return device; // Return the device if found
         }
     }
     return nullptr; // Device not found
+}
+
+int DeviceManager::updateHidDevicesState(){
+    return _hidDeviceManager.updateDeviceState(); // Delegate to HIDDeviceManager
+}
+
+DisplayDevice* DeviceManager::getDisplayDeviceById(DisplayId displayId){
+    return _displayDeviceManager.getDisplayById(displayId); // Delegate to DisplayDeviceManager
 }

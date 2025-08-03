@@ -11,4 +11,6 @@ enum class DeviceType {
     DEVICE_TYPE_DISPLAY,      // Display devices (e.g., SSD1306)
 };
 
+typedef int DisplayId; // Type alias for display device ID
+
 #endif // DEVICE_TYPES_H
