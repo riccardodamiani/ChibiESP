@@ -11,14 +11,17 @@
 #include <core/structs/program.h>
 
 #include "menu_program.h"
+#include "window_program.h"
 
 #include <vector>
 #include <memory>
 
 void user_setup_function(){
   CESP_Program menuProgram("menu program", menu_program_setup, menu_program_loop, menu_program_closeup );
-
   chibiESP.createProgram(menuProgram);
+
+  CESP_Program windowProgram("window program", window_program_setup, window_program_loop, window_program_closeup );
+  chibiESP.createProgram(windowProgram);
 
   chibiESP.startProgram("menu program");
 }

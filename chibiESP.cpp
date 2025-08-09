@@ -17,6 +17,9 @@
 #include "core/kernel/device/device.cpp"
 #include "core/kernel/device/hid_device.cpp"
 #include "core/kernel/device/display_device.cpp"
+#include "core/kernel/components/user_handle.cpp"
+#include "core/kernel/components/kernel_handle.cpp"
+#include "core/kernel/device/interfaces/display_handle.cpp"
 #include "core/kernel/components/task_manager.cpp"
 #include "core/kernel/components/program_manager.cpp"
 #include "core/kernel/components/device_manager.cpp"
@@ -74,12 +77,13 @@ int ChibiESP::register_device(Device* device){
 }
 
 /**
- * * @brief Gets the display device by id.
- * * @param deviceId the id of the display device to be retrieved.
- * * @return A pointer to the display device, or nullptr if not found.
+ * * @brief Requests a display handle for a specific display ID.
+ * * @param displayId The ID of the display for which to request a handle.
+ * * @param handle The display handle to be filled with the requested handle.
+ * * @return 0 on success, or an error code < 0 if the handle could not be created
  */
-DisplayDevice* ChibiESP::getDisplayDevice(DisplayId displayId){
-  return _kernel->getDisplayDevice(displayId); // Get the display device by id
+int ChibiESP::requestDisplayHandle(DisplayId displayId, DisplayHandle &handle){
+  return _kernel->requestDisplayHandle(displayId, handle);
 }
 
 /**
@@ -126,6 +130,15 @@ bool ChibiESP::registerI2cInterface(int bus, int sda_pin, int scl_pin){
 TwoWire* ChibiESP::getI2cInterface(int bus){
   return _kernel->getI2cInterface(bus);
 }
+
+/**
+ * * @brief Frees a handle by its ID.
+ * * @param handleId The ID of the handle to free.
+ */
+int ChibiESP::freeDisplayHandle(uint32_t deviceId, uint32_t handleId){
+  return _kernel->freeDisplayHandle(deviceId, handleId);
+}
+
 
 /**
  * * @brief Gets the navigation up event.

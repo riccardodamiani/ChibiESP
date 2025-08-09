@@ -91,3 +91,11 @@ int DeviceManager::updateHidDevicesState(){
 DisplayDevice* DeviceManager::getDisplayDeviceById(DisplayId displayId){
     return _displayDeviceManager.getDisplayById(displayId); // Delegate to DisplayDeviceManager
 }
+
+int DeviceManager::getDisplayHandle(DisplayId displayId, DisplayHandle &handle){
+    return _displayDeviceManager.createHandle(displayId, handle); // Delegate to DisplayDeviceManager
+}
+
+int DeviceManager::freeDisplayHandle(uint32_t deviceId, uint32_t handleId){
+    return _displayDeviceManager.freeHandle(deviceId, handleId); // Delegate to DisplayDeviceManager
+}

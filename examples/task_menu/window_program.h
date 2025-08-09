@@ -13,25 +13,16 @@
 
 #include <memory>
 
-const void menu_program_setup(CESP_UserTaskData &taskData){
-    Logger::info("Menu program setup");
+const void window_program_setup(CESP_UserTaskData &taskData){
+    Logger::info("Window program setup");
 
     taskData.taskInterface.createView();
     View *view = taskData.taskInterface.getActiveView();
-    view->create_generic_element(0, "this is a text", 0, 0);
-    view->create_button_element(1, "button", 0, 10);
-    view->create_generic_element(2, "try this:", 0, 20);
-    view->create_list_element(3, 60, 20);
-    view->gui_list_add_text(3, "option 1");
-    view->gui_list_add_text(3, "option 2");
-    view->gui_list_add_text(3, "option 3");
-    view->gui_list_add_text(3, "option 4");
-    view->create_generic_element(4, "press: ", 0, 30);
-    view->create_button_element(5, "button2", 40, 30);
-    view->create_button_element(6, "open window", 0, 40);
+    view->create_generic_element(0, "Sample window", 0, 0);
+    view->create_button_element(1, "close window", 0, 10);
 }
 
-const void menu_program_loop(CESP_UserTaskData &taskData){
+const void window_program_loop(CESP_UserTaskData &taskData){
     InputEvent event;
     while(taskData.taskInterface.getInputEvent(event)){
   
@@ -46,10 +37,11 @@ const void menu_program_loop(CESP_UserTaskData &taskData){
         switch(gui_event){
           case GuiEvent::BUTTON_PRESSED:
           {
+            // Check if the close window button was pressed
             int elementId;
             ViewError returnCode = view->gui_get_selected_element(elementId);
-            if(returnCode == ViewError::NO_ERROR && elementId == 6){ // Open window button pressed
-              chibiESP.startProgram("window program");
+            if(returnCode == ViewError::NO_ERROR && elementId == 1){ // Close window button pressed
+              chibiESP.quitTask(taskData.taskID); // Gracefully quit the task
             }
             break;
           }
@@ -61,6 +53,6 @@ const void menu_program_loop(CESP_UserTaskData &taskData){
     delay(10);
 }
 
-const void menu_program_closeup(CESP_UserTaskData &task){
-    Logger::info("Closing menu program");
+const void window_program_closeup(CESP_UserTaskData &task){
+    Logger::info("Closing window program");
 }

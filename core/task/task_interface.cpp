@@ -53,7 +53,7 @@ bool TaskInterface::getInputEvent(InputEvent &event) { // Get the event from the
     if(!event_avail) return false;
 
     //dispatch the navigation command to the view
-    if(_enableGraphics && _views.size() > 0){
+    if(_enableGraphics && _views.size() > 0 && _hasDisplayAccess){
         View* active_view = _views.back();
 
         //checks up navigation event
@@ -145,7 +145,7 @@ void TaskInterface::_updateInterface(){
 
     if(millis() - _renderTimer > 100){
         _renderTimer = millis();
-        renderView();
+        _hasDisplayAccess = renderView();
     }
 }
 

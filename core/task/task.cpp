@@ -33,14 +33,7 @@ CESP_Task::CESP_Task(ChibiKernel* kernelObj, const int kernelCoreId, const int u
 
 CESP_Task::~CESP_Task(){
     Logger::info("Deleted task");
-    delay(1000);
     if(_taskInterface) delete _taskInterface;
-}
-
-void mammita(void* arg){
-    while(true){
-        delay(1000);
-    }
 }
 
 void CESP_Task::start_task(){

@@ -54,8 +54,8 @@ int ChibiKernel::register_device(Device* device){
   return _deviceManager->register_device(device); // Register the device with the device manager
 }
 
-DisplayDevice* ChibiKernel::getDisplayDevice(DisplayId deviceId){
-  return _deviceManager->getDisplayDeviceById(deviceId); // Get the display device by id
+int ChibiKernel::requestDisplayHandle(DisplayId deviceId, DisplayHandle &handle){
+  return _deviceManager->getDisplayHandle(deviceId, handle);
 }
 
 void ChibiKernel::update_device_state(){
@@ -82,6 +82,11 @@ bool ChibiKernel::registerI2cInterface(int bus, int sda_pin, int scl_pin){
 TwoWire* ChibiKernel::getI2cInterface(int bus){
   return _interfaceManager->getI2cInterface(bus);
 }
+
+int ChibiKernel::freeDisplayHandle(uint32_t deviceId, uint32_t handleId){
+  return _deviceManager->freeDisplayHandle(deviceId, handleId);
+}
+
 
 int ChibiKernel::register_input_listener(InputListener *&listener){
   return _input_manager.createInputListener(listener); // Register a new input listener

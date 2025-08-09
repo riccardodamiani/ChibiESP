@@ -8,37 +8,42 @@
 
 #include "core/kernel/device/device_types.h"
 #include "core/kernel/device/display_device.h"
+#include "core/kernel/device/interfaces/display_handle.h"
 #include "chibiESP.h"
 
 TaskViewRenderer::TaskViewRenderer(){
-    _displayDevice = chibiESP.getDisplayDevice(DisplayId(0));
-    if(!_displayDevice){
-        Logger::error("View renderer: No available display device");
+    if(chibiESP.requestDisplayHandle(DisplayId(0), _displayHandle) < 0){
+        Logger::error("View renderer: Unable to get display handle");
         _screenWidth = 0;
         _screenHeight = 0;
         return;
     }
 
     DisplayDeviceInfo_t info;
-    if(_displayDevice->get_device_info(info) < 0){
+    if(_displayHandle.get_device_info(info) < 0){
         Logger::error("View renderer: Could not get device info");
         _screenWidth = 0;
         _screenHeight = 0;
-        _displayDevice = nullptr;
         return;
     } 
     _screenWidth = info.screenWidth;
     _screenHeight = info.screenHeight;
+    _hasDisplayAccess = _displayHandle.getAccessState();
+    if(!_hasDisplayAccess){
+        Logger::error("View renderer: No access to display device");
+        return;
+    }
 }
 
 bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
-    if(_displayDevice == nullptr) return false;
+    _hasDisplayAccess = _displayHandle.getAccessState();
+    if(!_hasDisplayAccess) return false;
     if(renderView.elements.size() == 0) return true;
 
     //get text offsets and size
     for(int i = 0; i < renderView.elements.size(); i++){
         ItemRenderStruct &item = renderView.elements[i];
-        _displayDevice->getTextSize(item.text, item.view_x, item.view_y, 1, &item.real_x, &item.real_y, &item.width, &item.height);
+        _displayHandle.getTextSize(item.text, item.view_x, item.view_y, 1, &item.real_x, &item.real_y, &item.width, &item.height);
     }
     
     //for now hardcoded. TODO: should come from the device
@@ -60,7 +65,7 @@ bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
     //draws the elements until done
     int offsetY = renderView.elements[firstElementOnScreen].view_y;
 
-    _displayDevice->clearScreen();
+    _displayHandle.clearScreen();
     for(int i = firstElementOnScreen; i < renderView.elements.size(); i++){
         BW_Color bg_color = renderView.focusedItemIndex == i ? BW_Color::CESP_WHITE : BW_Color::CESP_BLACK;
         BW_Color fg_color = renderView.focusedItemIndex == i ? BW_Color::CESP_BLACK : BW_Color::CESP_WHITE;
@@ -69,12 +74,10 @@ bool TaskViewRenderer::renderView(ViewRenderStruct &renderView){
         if(displayItemRectY > _screenHeight){   //done drawing stuff
             break;
         }
-        //Logger::info("%d, %d, %d, %d, %s", renderView.elements[i].view_x, renderView.elements[i].view_y - offsetY, 
-         //   renderView.elements[i].width,  renderView.elements[i].height, renderView.elements[i].text.c_str() );
-        _displayDevice->drawText(renderView.elements[i].text, 
+        _displayHandle.drawText(renderView.elements[i].text, 
             renderView.elements[i].view_x, renderView.elements[i].view_y - offsetY, 
             1, bg_color, fg_color);
     }
-    _displayDevice->updateScreen();
+    _displayHandle.updateScreen();
     return true;
 }

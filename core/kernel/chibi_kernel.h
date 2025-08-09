@@ -46,10 +46,7 @@ public:
   void setNavUpEvent(InputEvent event);
   void setNavDownEvent(InputEvent event);
   void setNavSelectEvent(InputEvent event);
-
-  //devices getter
-  DisplayDevice* getDisplayDevice(DisplayId displayId);
-
+  
   //interfaces
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);
   TwoWire* getI2cInterface(int bus);
@@ -57,6 +54,10 @@ public:
   //core ids
   int getKernelCoreId() const { return _kernelCoreId; } // Getter for kernel core ID
   int getUserCoreId() const { return _userModeCoreId; } // Getter for user core ID
+
+  //handles
+  int requestDisplayHandle(DisplayId deviceId, DisplayHandle &handle);
+  int freeDisplayHandle(uint32_t deviceId, uint32_t handleId);
 
   static ChibiKernel* instance;
 private:

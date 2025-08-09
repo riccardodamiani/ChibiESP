@@ -21,7 +21,12 @@ void user_setup_function(){
   chibiESP.createProgram(buttonProgram);
   chibiESP.createProgram(blinkProgram);
 
-  chibiESP.startProgram("button program");
+  int programId = chibiESP.startProgram("button program");
+  if(programId < 0){
+    Logger::error("Failed to start button program");
+  }else{
+    Logger::info("Started button program with ID: %d", programId);
+  }
 }
 
 void setup() {

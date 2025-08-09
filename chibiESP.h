@@ -9,6 +9,7 @@
 #include "core/structs/program.h"
 #include "core/structs/input_structs.h"
 #include "core/kernel/device/device_types.h"
+#include "core/kernel/device/interfaces/display_handle.h"
 
 #include <string>
 #include <stdint.h>
@@ -47,7 +48,7 @@ public:
   void setNavSelectEvent(InputEvent event);
 
   //devices getter
-  DisplayDevice* getDisplayDevice(DisplayId displayId);
+  int requestDisplayHandle(DisplayId displayId, DisplayHandle &handle);
 
   //interfaces
   bool registerI2cInterface(int bus, int sda_pin, int scl_pin);
@@ -56,6 +57,9 @@ public:
   //getters for cores reservations
   int getKernelCoreId() const;
   int getUserCoreId() const;
+
+  //handles
+  int freeDisplayHandle(uint32_t deviceId, uint32_t handleId);
 private:
 
   ChibiKernel *_kernel; // Pointer to the kernel instance

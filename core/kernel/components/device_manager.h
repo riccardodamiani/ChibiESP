@@ -28,11 +28,15 @@ public:
     //control input device functions
     int updateHidDevicesState();
 
-    Device* getDeviceById(uint32_t deviceId);
+    //handles
+    int getDisplayHandle(DisplayId displayId, DisplayHandle &handle);
+    int freeDisplayHandle(uint32_t deviceId, uint32_t handleId);
 
+    Device* getDeviceById(uint32_t deviceId);
+private:
     //display device functions
     DisplayDevice* getDisplayDeviceById(DisplayId displayId);
-private:
+
     //mutexes
     std::mutex _deviceMutex;
 

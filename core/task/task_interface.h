@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <mutex>
+#include <atomic>
 
 class InputListener;
 class View;
@@ -48,6 +49,7 @@ private:
     bool _deleteCurrentView;
     std::mutex _viewMutex;
     int _renderTimer;
+    std::atomic<bool> _hasDisplayAccess{false};
 
     //navigation input events
     InputEvent _upNavEvent, _downNavEvent, _selectNavEvent;
