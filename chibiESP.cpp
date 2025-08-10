@@ -34,8 +34,9 @@
 #include "core/base_devices/ssd1306.cpp"
 #include "core/base_devices/wheel.cpp"
 #include "core/base_devices/button.cpp"
+#include "core/kernel/drivers/wifi_driver.cpp"
 
-ChibiESP chibiESP = ChibiESP(); // Global instance of ChibiESP
+ChibiESP chibiESP; // Global instance of ChibiESP
 
 ChibiESP::ChibiESP()
 {

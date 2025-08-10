@@ -10,6 +10,7 @@
 #include "core/structs/input_structs.h"
 #include "core/kernel/device/device_types.h"
 #include "core/kernel/device/interfaces/display_handle.h"
+#include "core/kernel/drivers/wifi_driver.h"
 
 #include <string>
 #include <stdint.h>
@@ -60,6 +61,8 @@ public:
 
   //handles
   int freeDisplayHandle(uint32_t deviceId, uint32_t handleId);
+
+  WifiDriver wifi;
 private:
 
   ChibiKernel *_kernel; // Pointer to the kernel instance
