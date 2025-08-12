@@ -290,7 +290,7 @@ void WifiDriver::getAPConnectedClients(std::vector<ConnectedClient>& clients) {
         tcpip_adapter_sta_info_t station = adapter_sta_list.sta[i];
 
         ConnectedClient client;
-        client.ip = IPv4Address(station.ip.addr);
+        client.ip = IPv4Address(ntohl(station.ip.addr));
         client.mac = MacAddress(station.mac);
 
         clients.push_back(client);
