@@ -16,6 +16,7 @@
 const void wifi_program_setup(CESP_UserTaskData &taskData){
     Logger::info("Wifi program started");
     Logger::info("Enabling station mode..");
+    chibiESP.wifi.setHostname("ChibiESP");
     chibiESP.wifi.enableStation();
     delay(1000);
 
